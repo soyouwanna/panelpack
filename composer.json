@@ -1,0 +1,13 @@
+{
+    "name": "decoweb/panelpack",
+    "description": "Admin panel pack for laravel",
+    "type": "project",
+    "license": "GNU",
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Decoweb\\Panelpack\\": "src/"
+        }
+    }
+}

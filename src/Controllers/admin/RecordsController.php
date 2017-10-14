@@ -1,0 +1,612 @@
+<?php
+
+namespace App\Http\Controllers\admin;
+
+use App\SysCoreSetup;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Schema;
+use App\SysCoreSetup as Table;
+use App\Image as Poza;
+use Illuminate\Support\Facades\DB;
+use App\Helpers\Contracts\HtmlContract;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
+
+class RecordsController extends Controller
+{
+    private $html;
+
+    public function __construct( HtmlContract $html)
+    {
+        $this->html = $html;
+        $this->middleware('auth');
+    }
+
+    /**
+     * Returns all records from a table
+     *
+     * @param $tabela
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     */
+    public function index($tabela)
+    {
+        $tabela = (string)trim($tabela);
+        $list = Table::pluck('table_name')->toArray();
+
+        if(!in_array($tabela, $list)){
+            return redirect('admin/home')->with('mesaj', 'Tabela nu exista in baza de date.');
+        }
+        $core = Table::where('table_name',$tabela)->first();
+
+        $settings = unserialize($core->settings);
+        //dd($settings);
+
+        $orderBy = ($settings['config']['functionSetOrder'] == 1)?'order':'created_at';
+        $appends = null;
+        $query = DB::table($tabela);
+        $this->applyFilters($query, $settings);
+        if( request()->has('order') && request()->has('dir')){
+            $query->orderBy(request('order'),request('dir'));
+            $appends[] = 'order|'.request('order');
+            $appends[] = 'dir|'.request('dir');
+        }
+        $query->orderBy($orderBy, 'asc');
+        $records = $query->get();
+
+        $recordsToArray = $records->toArray();
+        // ptr recursive - trebuie rearanjate
+        $result = $this->valuesToArray($recordsToArray);
+        if ( $settings['config']['functionRecursive'] == 1 ){
+            $tree = $this->drawTree($result, $settings['config']['displayedName'], $settings['config']['recursiveMax'] );
+        }else{
+            $tree = $result;
+        }
+
+        $paginated = $this->paginate($tree, $settings, $appends);
+        $filters = $this->generateFilters($core->id);
+        //dd($filters);
+        //dd($paginated);
+        if($settings['config']['functionImages'] == 1){
+            $poze = Poza::where('table_id', $core->id)->orderBy('ordine','asc')->get();
+            $pics = [];
+            foreach($poze as $poza ){
+                $pics[$poza->record_id][] = $poza->name;
+            }
+        }else{
+            $pics = null;
+        }
+
+        $spanActions = (int)$settings['config']['functionImages'] +
+            (int)$settings['config']['functionDelete'] +
+            (int)$settings['config']['functionEdit'] +
+            (int)$settings['config']['functionFile'];
+
+        return view('admin.records.index',['tabela'     => $paginated,
+                                           'core'       => $core,
+                                           'settings'   => $settings,
+                                           'pics'       => $pics,
+                                           'filters'    => $filters,
+                                            'spanActions' => $spanActions,
+                                        ]);
+    }
+
+    private function drawTree(array $array, $displayedName, $recursiveMax, $deep = 0, $parent = 0, &$result = array()){
+        if ($parent != 0){
+            $deep++;
+        }
+        foreach ($array as $key => $data){
+            if ( $data['parent'] == $parent ){
+                if ($parent != 0){
+                    $pad = str_repeat('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',$deep);
+                    $data[$displayedName] = $pad.$data[$displayedName];
+                }
+                $result[] = $data;
+                if ($deep < $recursiveMax){
+                    $this->drawTree($array, $displayedName, $recursiveMax, $deep, $data['id'], $result);
+                }
+            }
+        }
+        return $result;
+    }
+
+    private function getRecursiveIds($selectTable, $parentId, &$in = [])
+    {
+        $ids = DB::table( $selectTable )->where('parent', $parentId)->pluck('id')->toArray();
+        foreach ($ids as $id){
+            $in[] = $id;
+            $this->getRecursiveIds($selectTable, $id, $in);
+        }
+
+        return $in;
+    }
+
+    private function applyFilters($query, $settings)
+    {
+        if( empty($settings['filter']) ) return null;
+
+        foreach($settings['filter'] as $filter){
+            if( request()->has($filter) && !empty(request($filter)) ){
+                session( ['filters.'.$settings['config']['tableName'].'.'.$filter => trim(request($filter))] );
+                // Merge si metoda urmatoare:
+                //session()->put( 'filters.'.$settings['config']['tableName'].'.'.$filter, trim(request($filter)) );
+            }
+        }
+
+        if( session()->has('filters.'.$settings['config']['tableName']) ){
+
+            foreach( session('filters.'.$settings['config']['tableName']) as $filter =>$filterValue){
+
+                if ( $settings['elements'][$filter]['type'] == 'select' ){
+                    # Sa aflam daca categoriile au subcategorii
+                    if( Schema::hasColumn( $settings['elements'][$filter]['selectTable'],'parent') ){
+                        # daca au subcategorii, urmeaza sa le colectam id-urile
+                        # $filterValue este id-ul categoriei careia ii cautam subcat.
+                        $in = $this->getRecursiveIds($settings['elements'][$filter]['selectTable'],$filterValue);
+                        $in[] = $filterValue;
+                        $query->whereIn($filter,$in);
+                    }else{
+                        $query->where($filter,$filterValue);
+                    }
+                }
+
+                if ( $settings['elements'][$filter]['type'] == 'text' ){
+                    $query->where($filter,'like','%'.$filterValue.'%');
+                }
+            }
+        }
+        return $this;
+    }
+
+    public function resetFilters(Request $request, $tableName)
+    {
+        // FIX MEE - verifica existenta tabelei!
+        $deleted = false;
+        if( $request->session()->has('filters.'.$tableName) ){
+            $request->session()->forget('filters.'.$tableName);
+            $deleted = true;
+        }
+        $message = ($deleted)?'Filterele au fost sterse cu succes.':'Nu exista filtre setate.';
+        return redirect('admin/core/'.$tableName)->with('mesaj',$message);
+    }
+
+    /**
+     * Deletes a record in the specified table
+     *
+     * @param Request $request
+     * @param $tabela
+     * @param $id
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+    public function delete(Request $request, $tabela, $id)
+    {
+        $id = (int)$id; // $id of the record to delete
+        $table = Table::where('table_name', $tabela)->first();
+        if(null == $table){
+            $request->session()->flash('mesaj','Acesta tabela nu este exista.');
+            return redirect()->back();
+        }
+        $settings = unserialize($table->settings);
+        $model = 'App\\'.$table->model;
+        $record = $model::find($id);
+        if( $this->recordHasChildren($table->table_name, $record) === true ){
+            $name = strtoupper($record->$settings['config']['displayedName']);
+            $message = "EROARE: Categoria $name are subcategorii. Va rugam sa stergeti mai intai subcategoriile.";
+            return redirect('admin/core/'.$table->table_name)->with('mesaj',$message);
+        }
+        //dd($record);
+        $record->delete();
+        $request->session()->flash('mesaj',$settings['messages']['deleted']);
+        return redirect('admin/core/'.$table->table_name);
+    }
+
+    private function recordHasChildren($table, $record)
+    {
+        if( ! Schema::hasColumn($table,'parent') ){
+            return false;
+        }
+
+        $parentIds = DB::table($table)->pluck('parent')->toArray();
+        //dd($parentIds);
+        if(in_array($record->id,$parentIds)){
+            return true;
+        }
+
+        return false;
+    }
+    /**
+     * Displays a page for creating a new record in the specified table
+     *
+     * @param $table
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|\Illuminate\View\View
+     */
+    public function create($table)
+    {
+        if(!Schema::hasTable($table)){
+            return redirect('admin/home');
+        }
+
+        $core = Table::where('table_name',$table)->first();
+        $fields = unserialize($core->settings);
+        //dd($settings);
+        $settings = $this->getOptions($fields, $table);
+        return view('admin.records.create',['table'=>$core, 'settings'=>$settings]);
+    }
+
+    /**
+     * Stores a new record in a table; $id - from SysCoreSetup
+     *
+     * @param Request $request
+     * @param $id
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+    public function store(Request $request, SysCoreSetup $table)
+    {
+        $fields = unserialize($table->settings);
+        //dd($fields);
+        $model = 'App\\'.$table->model;
+        $newRecord = new $model();
+        $rules = $this->generateRules($fields['elements'], $table->table_name);
+        $this->validate($request,$rules);
+
+        foreach($fields['elements'] as $column=>$data){
+            if($data['type'] == 'checkbox'){
+                $newRecord->$column = (!empty($request->$column) && $request->$column == 'on')?1:2;
+            }else{
+                $colType = explode('|',$data['colType']); # We need to set manually decimal columns to NULL if input is empty ("")
+                if( $colType[0] == 'decimal' && trim($request->$column) == '' ){
+                    $newRecord->$column = null;
+                }else{
+                    $newRecord->$column = $request->$column;
+                }
+            }
+
+        }
+        if($fields['config']['functionVisible'] == 1){
+            $newRecord->visible = (!empty($request->visible) && $request->visible == 'on')?1:2;
+        }
+        if($fields['config']['functionSetOrder'] == 1){
+            $order = $model::max('order');
+            $order = (int)$order + 1;
+            $newRecord->order = $order;
+        }
+        $newRecord->save();
+
+        $request->session()->flash('mesaj',$fields['messages']['added']);
+        return redirect('admin/core/'.$table->table_name);
+    }
+
+    /**
+     * Edits a record
+     *
+     * @param $table
+     * @param $id
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function edit($table, $id)
+    {
+        $id = (int)$id;
+        $table = (string)trim($table);
+        $tableData = Table::select('name','model','settings')->where('table_name',$table)->first();
+        $fields = unserialize($tableData->settings);
+        $settings = $this->getOptions($fields, $table, $id);
+
+        $modelName = $tableData->model;
+        $model = '\App\\'.$modelName;
+        $record = $model::find($id);
+        //dd($settings);
+        return view('admin.records.edit',['record'=>$record, 'fields'=>$settings]);
+    }
+
+    /**
+     * Updates a record
+     *
+     * @param Request $request
+     * @param $tabela
+     * @param $id
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+    public function update(Request $request, $tabela, $id)
+    {
+        $id = (int)$id;
+        $table = trim($tabela);
+        $tableData = Table::select('id','name','model','settings')->where('table_name',$table)->first();
+        $fields = unserialize($tableData->settings);
+        //dd($fields);
+
+        $modelName = $tableData->model;
+        $model = '\App\\'.$modelName;
+        $record = $model::find($id);
+
+        $rules = $this->generateRules($fields['elements'], $table);
+        //dd($rules);
+
+        $this->validate($request,$rules);
+
+        foreach($fields['elements'] as $column=>$data){
+
+            if( $data['type'] == 'select' && $this->recordHasChildren($table,$record) ){
+                if( (int)$request->$column > 0 ){
+                    $request->session()->flash('aborted','Modificare nereusita. Acesta categorie are deja subcategorii.');
+                    return redirect('admin/core/'.$tabela.'/edit/'.$id);
+                }
+            }
+            if($data['type'] == 'checkbox'){
+                $record->$column = (!empty($request->$column) && $request->$column == 'on')?1:2;
+            }else{
+                $colType = explode('|',$data['colType']); # We need to set manually decimal columns to NULL if input is empty ("")
+                if( $colType[0] == 'decimal' && trim($request->$column) == '' ){
+                    $record->$column = null;
+                }else{
+                    $record->$column = $request->$column;
+                }
+            }
+
+        }
+        if($fields['config']['functionVisible'] == 1){
+            $record->visible = (!empty($request->visible) && $request->visible == 'on')?1:2;
+        }
+        $record->save();
+
+        $request->session()->flash('mesaj','Schimbarea a fost realizata cu succes!');
+        return redirect('admin/core/'.$tabela.'/edit/'.$id);
+    }
+
+    /**
+     * Update records' order | Delete multiple records
+     *
+     * @param Request $request
+     * @param         $tableName
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function recordsActions(Request $request, $tableName)
+    {
+        $table = (string)trim($tableName);
+        $tableData = Table::select('name','model','settings')->where('table_name',$table)->first();
+        if( !$tableData ){
+            return redirect('admin/core/'.$tableName)->with('aborted','Tabela nu exista. [EROARE GRAVA]');
+        }
+        $fields = unserialize($tableData->settings);
+
+        if($request->has('changeOrder') && $fields['config']['functionSetOrder'] != 1){
+            return redirect('admin/core/'.$tableName)->with('aborted','Ordinea nu poate fi setata pentru aceasta tabela.');
+        }
+        if($request->has('deleteItems') && $fields['config']['functionDelete'] != 1){
+            return redirect('admin/core/'.$tableName)->with('aborted','Elementele nu pot fi sterse pentru aceasta tabela.');
+        }
+
+        $modelName = $tableData->model;
+        $model = '\App\\'.$modelName;
+        $message = '';
+        if( $request->has('changeOrder') && $request->changeOrder == 1 ) {
+            if( $request->has('orderId') && is_array($request->orderId) && count($request->orderId) > 0 ){
+                foreach($request->orderId as $id=>$newOrder){
+                    $record = $model::find((int)$id);
+                    if( $record && $newOrder != $record->order && $newOrder >= 0 ){
+                        if ( ctype_digit((string) trim($newOrder)) !== true ) {
+                            continue;
+                        }
+                        $record->order = (int)$newOrder;
+                        $record->save();
+                    }else{
+                        continue;
+                    }
+                }
+                $message = 'Ordinea a fost schimbata cu succes!';
+            }
+        }
+        if( $request->has('deleteItems') && $request->deleteItems == 1){
+            if( $request->has('item') && is_array($request->item) && count($request->item) > 0){
+                $toDelete = [];
+                foreach($request->item as $itemKey=>$item){
+                    $record = $model::find((int)$itemKey);
+                    if( !is_null($record) && $this->recordHasChildren($table,$record) ){
+                        continue;
+                    }
+                    $toDelete[] = $itemKey;
+                }
+                $howMany = count($toDelete);
+                $model::whereIn('id',$toDelete)->delete();
+                $message = "Un numar de $howMany de elemente au fost sterse.";
+            }else{
+                $message = "Niciun element nu a fost sters.";
+            }
+        }
+
+        return redirect('admin/core/'.$tableName)->with('mesaj', $message);
+    }
+    /**
+     * Generates validation rules for storing a new record
+     *
+     * @param array $elements
+     * @return array|bool
+     */
+    private function generateRules(array $elements, $tableName)
+    {
+        if(!is_array($elements) || empty($elements)){
+            return false;
+        }
+        $rules = [];
+        $colsWithLength = ['varchar','char'];
+        $length = '';
+        $decimal = '';
+        foreach ($elements as $column=>$data){
+            $required = ($data['required'] == 1 && $data['type'] != 'checkbox')?'required|':'';
+            $colType = explode('|',$data['colType']);
+            if( $colType[0] == 'decimal'){
+                list($total,$decimals) = explode(',',$colType[1]);
+                $total = str_repeat('9',$total - $decimals);
+                $decimals = str_repeat('9',$decimals);
+                $decimal = "numeric|max:{$total}.{$decimals}|";
+            }elseif( in_array($colType[0], $colsWithLength)){
+                $length = 'max:' . $colType[1] .'|';
+            }
+            if( $data['type'] == 'select'){
+                $ids = DB::table($data['selectTable'])->pluck('id')->toArray();
+                //dd($ids);
+                $ids = implode(',',$ids);
+
+                if($data['selectTable'] == $tableName){
+                    $ids .= ',0';
+                }
+                /*dd($tableName);
+                dd($data['selectTable']);*/
+                $select = "integer|in:{$ids}|";
+            }else{
+                $select = '';
+            }
+            $rules[$column] = trim("{$required}{$select}{$decimal}{$length}",'|');
+            if(empty($rules[$column])){
+                unset($rules[$column]);
+            }
+            $length = '';
+            $decimal = '';
+        }
+
+        //dd($rules);
+        return $rules;
+    }
+
+    private function getOptions(array $settings, $table, $excludeCurrentRecordId = null)
+    {
+        foreach($settings['elements'] as &$field){
+            if($field['type'] == 'select'){
+                if ( $field['selectTable'] != $table) {
+                    $parent = Table::where('table_name', $field['selectTable'])->first();
+                    $parentSettings = unserialize($parent->settings);
+                    $sameTable = false;
+                }else{
+                    $parentSettings = $settings;
+                    $sameTable = true;
+                }
+
+                $orderBy = ($parentSettings['config']['functionSetOrder'] == 1)?'order':'created_at';
+                // Check if parent table is recursive (if it has categories and subcategories)
+                if(array_key_exists('parent',$parentSettings['elements'])){
+                    $excludedId = ($excludeCurrentRecordId && $sameTable)?(int)$excludeCurrentRecordId:'';
+                    $options = DB::table($field['selectTable'])->select('id','parent',$parentSettings['config']['displayedName'])
+                        ->where('id','!=',$excludedId)->orderBy($orderBy)->get()->toArray();
+                    $toArray = $this->valuesToArray($options);
+                    // CREATE - Daca tabela este aceeasi: recursiveMax -= 1
+                    // EDIT - Daca tabela este aceeasi: la fel. In plus, trebuie exclus ID-ul editat din lista de optiuni
+                    $recursiveMax = ($sameTable)?$parentSettings['config']['recursiveMax'] - 1:$parentSettings['config']['recursiveMax'];
+                    $options = $this->drawTree($toArray, $parentSettings['config']['displayedName'],$recursiveMax );
+                    //$options = $this->drawTree($toArray, $parentSettings['config']['displayedName'],$parentSettings['config']['recursiveMax'] );
+                }else{
+                    $options = DB::table($field['selectTable'])->select('id', $parentSettings['config']['displayedName'])
+                        ->orderBy($orderBy)->get()->toArray();
+                    $options = $this->valuesToArray($options);
+                }
+
+                if($settings['config']['functionRecursive'] == 1 && $field['selectTable'] == $table){
+                    $default = (empty($field['selectFirstEntry']))?'Categorie principala':$field['selectFirstEntry'];
+                    $field['options'][] = $default;
+                }else{
+                    $default = (empty($field['selectFirstEntry']))?'':$field['selectFirstEntry'];
+                    $field['options'][] = $default;
+                }
+
+                foreach($options as $option){
+                    $field['options'][$option['id']] = $option[$parentSettings['config']['displayedName']];
+                }
+            }
+        }
+        //dd($settings);
+        return $settings;
+    }
+
+    /**
+     * @param $arrayOfObjects
+     * @return array
+     */
+    private function valuesToArray(array $arrayOfObjects)
+    {
+        $result = array_map(function ($value) {
+            return (array) $value;
+        }, $arrayOfObjects);
+        return $result;
+    }
+
+    /**
+     * @param $tree
+     * @param $settings
+     * @return LengthAwarePaginator
+     */
+    private function paginate($tree, $settings, $appends = null)
+    {
+        #paginator START
+        //Get current page form url e.g. &page=6
+        $currentPage = LengthAwarePaginator::resolveCurrentPage();
+
+        //Create a new Laravel collection from the array data
+        $collection = new Collection($tree);
+
+        //Define how many items we want to be visible in each page
+        $perPage = $settings['config']['limitPerPage'];
+
+        //Slice the collection to get the items to display in current page
+        $currentPageSearchResults = $collection->slice(($currentPage - 1) * $perPage, $perPage)->all();
+
+        //Create our paginator and pass it to the view
+        $paginated = new LengthAwarePaginator($currentPageSearchResults, count($collection), $perPage);
+        if( $appends !== null ) {
+            foreach($appends as $request){
+                list($key, $value) = explode('|',$request);
+                $paginated->appends($key, $value);
+            }
+        }
+        return $paginated;
+
+        #paginator END
+    }
+
+    private function generateFilters($tableId)
+    {
+        $table = Table::find($tableId);
+        $settings = unserialize($table->settings);
+        if( empty($settings['filter']) ) {
+            return false;
+        }
+        //return $settings;
+        //dd($settings);
+        $filterColumns = $settings['filter'];
+        $elements = $settings['elements'];
+
+        $filters = [];
+        $filterKey = 0;
+        foreach($filterColumns as $filterColumn){
+            if(array_key_exists($filterColumn,$elements)){
+                if( $elements[$filterColumn]['type'] == 'select'){
+                    if( $elements[$filterColumn]['selectTable'] != $table->name){
+                        $filters[$filterKey]['type'] = 'select';
+                        $filters[$filterKey]['column'] = $filterColumn;
+                        $filters[$filterKey]['name'] = $elements[$filterColumn]['friendlyName'];
+
+                        $newSettings = $this->getOptions($settings, $table->table_name);
+                        $filters[$filterKey]['options'] = $newSettings['elements'][$filterColumn]['options'];
+                    }
+                }
+                if( $elements[$filterColumn]['type'] == 'text'){
+                    $filters[$filterKey]['type'] = 'text';
+                    $filters[$filterKey]['column'] = $filterColumn;
+                    $filters[$filterKey]['name'] = $elements[$filterColumn]['friendlyName'];
+                }
+            }
+            ++$filterKey;
+        }
+        return $filters;
+    }
+
+    public function limit(Request $request, Table $table)
+    {
+        $this->validate($request,[
+            'perPage' => 'required|integer|min:5'
+        ]);
+        $settings = unserialize($table->settings);
+        $settings['config']['limitPerPage'] = $request->perPage;
+        $table->settings = serialize($settings);
+        $table->save();
+
+        return redirect()->back();
+    }
+}
