@@ -23,6 +23,5 @@ class PanelPackProvider extends ServiceProvider
      */
     public function register()
     {
-        //$this->app->make('Decoweb\Panelpack\TestController');
     }
 }
