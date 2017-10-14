@@ -3,7 +3,6 @@
 namespace Decoweb\Panelpack;
 
 use Illuminate\Support\ServiceProvider;
-use Decoweb\Panelpack\TestController;
 class PanelPackProvider extends ServiceProvider
 {
     /**
