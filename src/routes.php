@@ -29,16 +29,16 @@ Route::post('admin/login', 'Decoweb\Panelpack\Controllers\Auth\LoginController@l
 Route::post('admin/logout', 'Decoweb\Panelpack\Controllers\Auth\LoginController@logout')->name('logout');
 
 // Cart routes
-Route::post('addCart','CartController@addCart')->name('addCart');
-Route::get('cart','CartController@index');
-Route::get('cart/destroy','CartController@cartDestroy');
-Route::get('cart/deleteItem/{rowId}','CartController@deleteItem');
-Route::get('cart/checkout2','CartController@checkout2');
-Route::get('cart/checkout3','CartController@checkout3');
-Route::get('cart/checkout4','CartController@checkout4');
-Route::post('cart/storeOrder/','CartController@storeOrder');
-Route::post('cart/modalInfo','CartController@modalInfo');
-Route::post('cart/update','CartController@update');
+Route::post('addCart','Decoweb\Panelpack\Controllers\CartController@addCart')->name('addCart');
+Route::get('cart','Decoweb\Panelpack\Controllers\CartController@index');
+Route::get('cart/destroy','Decoweb\Panelpack\Controllers\CartController@cartDestroy');
+Route::get('cart/deleteItem/{rowId}','Decoweb\Panelpack\Controllers\CartController@deleteItem');
+Route::get('cart/checkout2','Decoweb\Panelpack\Controllers\CartController@checkout2');
+Route::get('cart/checkout3','Decoweb\Panelpack\Controllers\CartController@checkout3');
+Route::get('cart/checkout4','Decoweb\Panelpack\Controllers\CartController@checkout4');
+Route::post('cart/storeOrder/','Decoweb\Panelpack\Controllers\CartController@storeOrder');
+Route::post('cart/modalInfo','Decoweb\Panelpack\Controllers\CartController@modalInfo');
+Route::post('cart/update','Decoweb\Panelpack\Controllers\CartController@update');
 
 /***************************
  *

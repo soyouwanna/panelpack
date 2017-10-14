@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\admin;
+namespace Decoweb\Panelpack\Controllers\Admin;
 
 use App\SysCoreSetup;
 use Illuminate\Http\Request;
@@ -9,17 +9,14 @@ use Illuminate\Support\Facades\Schema;
 use App\SysCoreSetup as Table;
 use App\Image as Poza;
 use Illuminate\Support\Facades\DB;
-use App\Helpers\Contracts\HtmlContract;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 
 class RecordsController extends Controller
 {
-    private $html;
 
-    public function __construct( HtmlContract $html)
+    public function __construct()
     {
-        $this->html = $html;
         $this->middleware('auth');
     }
 
