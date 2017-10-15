@@ -2,7 +2,7 @@
 
 namespace Decoweb\Panelpack\Controllers\CustomerAuth;
 
-use App\Customer;
+use Decoweb\Panelpack\Models\Customer;
 use App\Mail\CustomerLinkConfirmation;
 use Validator;
 use App\Http\Controllers\Controller;

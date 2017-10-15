@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Auth;
 use Socialite;
-use App\Customer;
+use Decoweb\Panelpack\Models\Customer;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
 class FbauthController extends Controller

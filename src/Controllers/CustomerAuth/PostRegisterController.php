@@ -2,12 +2,11 @@
 
 namespace Decoweb\Panelpack\Controllers\CustomerAuth;
 
-use Illuminate\Http\Request;
 use App\Mail\FbUserPassword;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use App\Http\Controllers\Controller;
-use App\Customer;
+use Decoweb\Panelpack\Models\Customer;
 use Illuminate\Support\Facades\Auth;
 class PostRegisterController extends Controller
 {

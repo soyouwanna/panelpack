@@ -11,8 +11,8 @@ use Decoweb\Panelpack\Models\Transport;
 use Decoweb\Panelpack\Models\Order;
 use Decoweb\Panelpack\Models\Ordereditem;
 use Decoweb\Panelpack\Models\Proforma;
-use App\Helpers\Contracts\MagazinContract as Magazin;
-use App\Helpers\Contracts\PicturesContract as Pictures;
+use Decoweb\Panelpack\Helpers\Contracts\MagazinContract as Magazin;
+use Decoweb\Panelpack\Helpers\Contracts\PicturesContract as Pictures;
 use App\Mail\NewOrderConfirm;
 use Illuminate\Support\Facades\Mail;
 class CartController extends Controller
