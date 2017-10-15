@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\ViewComposers;
+namespace Decoweb\Panelpack\ViewComposers;
 
 use Illuminate\View\View;
-use App\SysSetting;
-use App\Map;
+use Decoweb\Panelpack\Models\SysSetting;
+use Decoweb\Panelpack\Models\Map;
 class SettingsComposer
 {
     protected $sysSettings;

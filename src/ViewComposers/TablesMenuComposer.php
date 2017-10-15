@@ -1,8 +1,8 @@
 <?php
-namespace App\Http\ViewComposers;
+namespace Decoweb\Panelpack\ViewComposers;
 
 use Illuminate\View\View;
-use App\SysCoreSetup as Tables;
+use Decoweb\Panelpack\Models\SysCoreSetup as Tables;
 
 class TablesMenuComposer
 {

@@ -34,11 +34,17 @@ class PanelPackProvider extends ServiceProvider
             __DIR__.'/config/settings.php' => config_path('settings.php'),
         ], 'config');
 
+        $this->publishes([
+            __DIR__.'/Middleware' => app_path('Http/Middleware'),
+        ], 'middleware');
+
         $this->loadViewsFrom(__DIR__.'/Views', 'decoweb');
 
         $this->publishes([
             __DIR__.'/Views' => resource_path('views/vendor/decoweb'),
         ]);
+
+        $this->loadMigrationsFrom(__DIR__.'/Migrations');
     }
 
     /**
