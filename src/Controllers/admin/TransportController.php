@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\admin;
+namespace Decoweb\Panelpack\Controllers\Admin;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Transport;
+use Decoweb\Panelpack\Models\Transport;
 class TransportController extends Controller
 {
 

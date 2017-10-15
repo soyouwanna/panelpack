@@ -4,17 +4,15 @@ namespace Decoweb\Panelpack\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Customer;
+use Decoweb\Panelpack\Models\Customer;
 use Illuminate\Support\Facades\Auth;
 use Validator;
-use App\Order;
+use Decoweb\Panelpack\Models\Order;
 use Illuminate\Support\Facades\Hash;
 use App\Mail\CustomerLinkConfirmation;
 use Illuminate\Support\Facades\Mail;
 class CustomerController extends Controller
 {
-
-
     public function __construct()
     {
         $this->middleware('web');

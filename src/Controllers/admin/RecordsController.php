@@ -2,12 +2,12 @@
 
 namespace Decoweb\Panelpack\Controllers\Admin;
 
-use App\SysCoreSetup;
+use Decoweb\Panelpack\Models\SysCoreSetup;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Schema;
-use App\SysCoreSetup as Table;
-use App\Image as Poza;
+use Decoweb\Panelpack\Models\SysCoreSetup as Table;
+use Decoweb\Panelpack\Models\Image as Poza;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;

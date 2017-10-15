@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Http\Controllers\admin;
+namespace Decoweb\Panelpack\Controllers\Admin;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Sitemap;
-use App\Product;
-use App\Category;
-use App\Sitemap as Map;
+use Decoweb\Panelpack\Models\Product;
+use Decoweb\Panelpack\Models\Category;
+use Decoweb\Panelpack\Models\Sitemap as Map;
 use Illuminate\Support\Facades\Storage;
 class SitemapController extends Controller
 {

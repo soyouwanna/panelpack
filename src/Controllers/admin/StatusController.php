@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\admin;
+namespace Decoweb\Panelpack\Controllers\Admin;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Status;
+use Decoweb\Panelpack\Models\Status;
 class StatusController extends Controller
 {
     private $statuses;

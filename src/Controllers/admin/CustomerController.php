@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\admin;
+namespace Decoweb\Panelpack\Controllers\Admin;
 
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Customer;
+use Decoweb\Panelpack\Models\Customer;
 use DB;
 use Illuminate\Support\Facades\Hash;
 use App\Notifications\YourAccountWasCreatedManually;

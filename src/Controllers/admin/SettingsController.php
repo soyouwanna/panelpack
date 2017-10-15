@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\admin;
+namespace Decoweb\Panelpack\Controllers\Admin;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\SysSetting;
+use Decoweb\Panelpack\Models\SysSetting;
 class SettingsController extends Controller
 {
     private $settings;

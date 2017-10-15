@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Http\Controllers\admin;
+namespace Decoweb\Panelpack\Controllers\Admin;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
-use App\SysCoreSetup as Table;
+use Decoweb\Panelpack\Models\SysCoreSetup as Table;
 use Illuminate\Support\Facades\Storage;
-use App\Image;
+use Decoweb\Panelpack\Models\Image;
 class TablesController extends Controller
 {
     private $table;

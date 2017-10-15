@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\admin;
+namespace Decoweb\Panelpack\Controllers\Admin;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\SysCoreSetup as Table;
-use App\Image as Poza;
+use Decoweb\Panelpack\Models\SysCoreSetup as Table;
+use Decoweb\Panelpack\Models\Image as Poza;
 use Illuminate\Support\Facades\Storage;
 
 class ImagesController extends Controller

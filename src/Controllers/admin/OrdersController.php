@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\admin;
+namespace Decoweb\Panelpack\Controllers\Admin;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Order;
-use App\Ordereditem;
-use App\Proforma;
-use App\Status;
+use Decoweb\Panelpack\Models\Order;
+use Decoweb\Panelpack\Models\Ordereditem;
+use Decoweb\Panelpack\Models\Proforma;
+use Decoweb\Panelpack\Models\Status;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\OrderStatusChange;
 use DB;

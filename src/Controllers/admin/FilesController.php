@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\admin;
+namespace Decoweb\Panelpack\Controllers\Admin;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\SysCoreSetup as Table;
-use App\File;
+use Decoweb\Panelpack\Models\SysCoreSetup as Table;
+use Decoweb\Panelpack\Models\File;
 use Illuminate\Support\Facades\Storage;
 class FilesController extends Controller
 {

@@ -3,15 +3,14 @@
 namespace Decoweb\Panelpack\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Customer;
-use App\Product;
+use Decoweb\Panelpack\Models\Customer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Cart;
-use App\Transport;
-use App\Order;
-use App\Ordereditem;
-use App\Proforma;
+use Decoweb\Panelpack\Models\Transport;
+use Decoweb\Panelpack\Models\Order;
+use Decoweb\Panelpack\Models\Ordereditem;
+use Decoweb\Panelpack\Models\Proforma;
 use App\Helpers\Contracts\MagazinContract as Magazin;
 use App\Helpers\Contracts\PicturesContract as Pictures;
 use App\Mail\NewOrderConfirm;

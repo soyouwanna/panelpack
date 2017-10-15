@@ -3,10 +3,10 @@
 namespace Decoweb\Panelpack\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Order;
-use App\Ordereditem;
-use App\Invoice;
-use App\Proforma;
+use Decoweb\Panelpack\Models\Order;
+use Decoweb\Panelpack\Models\Ordereditem;
+use Decoweb\Panelpack\Models\Invoice;
+use Decoweb\Panelpack\Models\Proforma;
 class ProformaController extends Controller
 {
     private $invoice;

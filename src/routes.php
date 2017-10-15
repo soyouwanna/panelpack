@@ -1,5 +1,7 @@
 <?php
-Route::get('tester', "Decoweb\Panelpack\TestController@index")->middleware('web');
+Route::get('tester', function(){
+    return 555;
+})->middleware('web');
 
 # customer
 Route::get('/customer/login/{cart?}','Decoweb\Panelpack\Controllers\CustomerAuth\LoginController@showLoginForm');
