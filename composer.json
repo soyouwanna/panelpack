@@ -2,12 +2,50 @@
     "name": "decoweb/panelpack",
     "description": "Admin panel pack for laravel",
     "type": "project",
-    "license": "GNU",
+    "license": "MIT",
     "minimum-stability": "dev",
-    "require": {},
+    "require": {
+        "barryvdh/laravel-dompdf": "^0.8.0",
+        "gloudemans/shoppingcart": "^2.2",
+        "guzzlehttp/guzzle": "^6.2",
+        "intervention/imagecache": "^2.3",
+        "laravel/socialite": "v2.0.20",
+        "laravel/tinker": "~1.0",
+        "laravelcollective/html": "5.4.*",
+        "unisharp/laravel-ckeditor": "^4.5",
+        "unisharp/laravel-filemanager": "1.7.6",
+        "watson/sitemap": "^2.0"
+    },
     "autoload": {
         "psr-4": {
             "Decoweb\\Panelpack\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Collective\\Html\\HtmlServiceProvider",
+                "Unisharp\\Laravelfilemanager\\LaravelFilemanagerServiceProvider",
+                "Intervention\\Image\\ImageServiceProvider",
+                "Gloudemans\\Shoppingcart\\ShoppingcartServiceProvider",
+                "Watson\\Sitemap\\SitemapServiceProvider",
+                "Unisharp\\Ckeditor\\ServiceProvider",
+                "Decoweb\\Panelpack\\PanelPackProvider",
+                "Decoweb\\Panelpack\\Providers\\MagazinServiceProvider",
+                "Decoweb\\Panelpack\\Providers\\PicturesServiceProvider",
+                "Decoweb\\Panelpack\\Providers\\ComposerServiceProvider",
+                "Laravel\\Socialite\\SocialiteServiceProvider",
+                "Barryvdh\\DomPDF\\ServiceProvider"
+            ],
+            "aliases": {
+                "Form": "Collective\\Html\\FormFacade",
+                "Html": "Collective\\Html\\HtmlFacade",
+                "Image": "Intervention\\Image\\Facades\\Image",
+                "Cart": "Gloudemans\\Shoppingcart\\Facades\\Cart",
+                "Socialite": "Laravel\\Socialite\\Facades\\Socialite",
+                "PDF": "Barryvdh\\DomPDF\\Facade",
+                "Sitemap": "Watson\\Sitemap\\Facades\\Sitemap"
+            }
         }
     }
 }
