@@ -36,5 +36,9 @@ class LoginController extends Controller
         $this->middleware('web');
         $this->middleware('guest', ['except' => 'logout']);
     }
+    public function showLoginForm()
+    {
+        return view('decoweb::auth.login');
+    }
 
 }
