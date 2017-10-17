@@ -24,6 +24,7 @@ class CustomerController extends Controller
     public function __construct(Customer $customer)
     {
         $this->customers = $customer;
+        $this->middleware('web');
         $this->middleware('auth');
     }
 
@@ -40,7 +41,7 @@ class CustomerController extends Controller
         }else{
             $customers = $this->customers->orderBy('created_at', $ord[1])->paginate($perPage);
         }
-        return view('admin.shop.customers.index',[
+        return view('decoweb::admin.shop.customers.index',[
             'customers'     =>$customers,
             'perPage'       => $perPage,
         ]);
@@ -57,7 +58,7 @@ class CustomerController extends Controller
 
     public function create()
     {
-        return view('admin.shop.customers.create');
+        return view('decoweb::admin.shop.customers.create');
     }
 
     private function rules()
@@ -128,7 +129,7 @@ class CustomerController extends Controller
     {
         $customer = $this->customers->findOrFail($id);
 
-        return view('admin.shop.customers.edit',['customer'=>$customer]);
+        return view('decoweb::admin.shop.customers.edit',['customer'=>$customer]);
     }
 
     public function update(Request $request, $id)

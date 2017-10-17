@@ -15,6 +15,7 @@ class HomeController extends Controller
      */
     public function __construct()
     {
+        $this->middleware('web');
         $this->middleware('auth');
     }
 
@@ -25,13 +26,13 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('admin.home');
+        return view('decoweb::admin.home');
     }
 
     public function account()
     {
         $user = User::findOrFail(1);
-        return view('admin.account',[
+        return view('decoweb::admin.account',[
             'user' => $user,
         ]);
     }

@@ -17,6 +17,7 @@ class OrdersController extends Controller
 
     public function __construct(Order $order)
     {
+        $this->middleware('web');
         $this->middleware('auth');
         $this->orders = $order;
     }
@@ -64,7 +65,7 @@ class OrdersController extends Controller
                 'perPage'       => $perPage,
             ]);
         }
-        return view('admin.shop.orders.index',[
+        return view('decoweb::admin.shop.orders.index',[
             'selectStatus'  => $selectStatus,
             'orders'        => $orders->paginate($perPage),
             'perPage'       => $perPage,
@@ -101,7 +102,7 @@ class OrdersController extends Controller
         }
         //dd($selectStatus);
         $proforma = Proforma::select('code')->where('order_id',$order->id)->first();
-        return view('admin.shop.orders.edit', [
+        return view('decoweb::admin.shop.orders.edit', [
             'order'         => $order,
             'proformaCode'  =>$proforma->code,
             'selectStatus'  => $selectStatus,

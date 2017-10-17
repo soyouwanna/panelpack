@@ -11,6 +11,7 @@ class FilesController extends Controller
 {
     public function __construct()
     {
+        $this->middleware('web');
         $this->middleware('auth');
     }
 
@@ -73,7 +74,7 @@ class FilesController extends Controller
         $name = $settings['config']['displayedName'];
         $pageName =  $settings['config']['pageName'];
         $noFiles = $settings['messages']['no_files'];
-        return view('admin.files.create',[
+        return view('decoweb::admin.files.create',[
             'filesMax'  => $filesMax,
             'record'    => $record,
             'name'      => $name,
@@ -149,8 +150,8 @@ class FilesController extends Controller
         $file->save();
 
         // Store file on disk
-        Storage::disk('files')->putFileAs('../../public_html/ldm/files/', $request->file('file'), $fileName);
-        // Storage::disk('files')->putFileAs('files', $request->file('file'), $fileName);
+        // Storage::disk('files')->putFileAs('../../public_html/ldm/files/', $request->file('file'), $fileName);
+        Storage::disk('files')->putFileAs('files', $request->file('file'), $fileName);
         $request->session()->flash('mesaj','Fisierul a fost adugat cu succes!');
         return redirect('admin/core/'.$tabela.'/addFile/'.$recordId);
     }
@@ -173,8 +174,8 @@ class FilesController extends Controller
         $tableName = $file->table->table_name;
         $recordId = $file->record_id;
 
-        Storage::disk('files')->delete('../../public_html/ldm/files/'.$file->name);
-        // Storage::disk('files')->delete('files/'.$file->name);
+        // Storage::disk('files')->delete('../../public_html/ldm/files/'.$file->name);
+        Storage::disk('files')->delete('files/'.$file->name);
         $file->delete();
 
         return redirect('admin/core/'.$tableName.'/addFile/'.$recordId)->with('mesaj','Fisierul a fost sters.');

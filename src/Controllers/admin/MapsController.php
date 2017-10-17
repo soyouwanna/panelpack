@@ -10,12 +10,13 @@ class MapsController extends Controller
     private $map;
     public function __construct()
     {
+        $this->middleware('web');
         $this->middleware('auth');
         $this->map = Map::first();
     }
     public function index()
     {
-        return view('admin.maps.index',['map'=>$this->map]);
+        return view('decoweb::admin.maps.index',['map'=>$this->map]);
     }
 
     public function update(Request $request)

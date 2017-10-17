@@ -13,6 +13,7 @@ class ImagesController extends Controller
 
     public function __construct()
     {
+        $this->middleware('web');
         $this->middleware('auth');
     }
 
@@ -75,7 +76,7 @@ class ImagesController extends Controller
         $name = $settings['config']['displayedName'];
         $pageName =  $settings['config']['pageName'];
         $noPics = $settings['messages']['no_images'];
-        return view('admin.images.create',[
+        return view('decoweb::admin.images.create',[
             'imagesMax' => $imagesMax,
             'record'    => $record,
             'name'      => $name,

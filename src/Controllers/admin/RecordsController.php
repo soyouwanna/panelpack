@@ -17,6 +17,7 @@ class RecordsController extends Controller
 
     public function __construct()
     {
+        $this->middleware('web');
         $this->middleware('auth');
     }
 
@@ -79,7 +80,7 @@ class RecordsController extends Controller
             (int)$settings['config']['functionEdit'] +
             (int)$settings['config']['functionFile'];
 
-        return view('admin.records.index',['tabela'     => $paginated,
+        return view('decoweb::admin.records.index',['tabela'     => $paginated,
                                            'core'       => $core,
                                            'settings'   => $settings,
                                            'pics'       => $pics,
@@ -227,7 +228,7 @@ class RecordsController extends Controller
         $fields = unserialize($core->settings);
         //dd($settings);
         $settings = $this->getOptions($fields, $table);
-        return view('admin.records.create',['table'=>$core, 'settings'=>$settings]);
+        return view('decoweb::admin.records.create',['table'=>$core, 'settings'=>$settings]);
     }
 
     /**
@@ -292,7 +293,7 @@ class RecordsController extends Controller
         $model = '\App\\'.$modelName;
         $record = $model::find($id);
         //dd($settings);
-        return view('admin.records.edit',['record'=>$record, 'fields'=>$settings]);
+        return view('decoweb::admin.records.edit',['record'=>$record, 'fields'=>$settings]);
     }
 
     /**

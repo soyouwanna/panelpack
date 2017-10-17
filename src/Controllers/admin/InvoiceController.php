@@ -17,12 +17,13 @@ class InvoiceController extends Controller
 
     public function __construct(Invoice $invoice)
     {
+        $this->middleware('web');
         $this->middleware('auth');
         $this->invoice = $invoice->first();
     }
     public function index()
     {
-        return view('admin.shop.invoice.index',['invoice'=>$this->invoice]);
+        return view('decoweb::admin.shop.invoice.index',['invoice'=>$this->invoice]);
     }
 
 
