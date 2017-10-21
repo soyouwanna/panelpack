@@ -40,6 +40,6 @@ class CustomerLinkConfirmation extends Mailable
     {
         return $this->from($this->system_email,$this->site_name)
                     ->subject('Confirmare email')
-                    ->view('emails.emailconfirm');
+                    ->view('decoweb::emails.emailconfirm');
     }
 }

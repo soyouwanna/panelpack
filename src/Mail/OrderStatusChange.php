@@ -31,6 +31,6 @@ class OrderStatusChange extends Mailable
     public function build()
     {
         return $this->subject('Statusul comenzii a fost schimbat')
-            ->view('emails.OrderStatusChange');
+            ->view('decoweb::emails.OrderStatusChange');
     }
 }
