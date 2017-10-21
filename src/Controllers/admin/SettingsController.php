@@ -11,12 +11,13 @@ class SettingsController extends Controller
     public function __construct(SysSetting $sysSetting)
     {
         $this->settings = $sysSetting;
+        $this->middleware('web');
         $this->middleware('auth');
     }
 
     public function index()
     {
-        return view('admin.settings.index');
+        return view('decoweb::admin.settings.index');
     }
 
     public function update(Request $request)
@@ -38,7 +39,7 @@ class SettingsController extends Controller
 
     public function social()
     {
-        return view('admin.settings.social');
+        return view('decoweb::admin.settings.social');
     }
 
     public function updateSocial(Request $request)

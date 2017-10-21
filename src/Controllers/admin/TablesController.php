@@ -69,6 +69,7 @@ class TablesController extends Controller
 
     public function __construct()
     {
+        $this->middleware('web');
         $this->middleware('auth');
     }
 
@@ -80,7 +81,7 @@ class TablesController extends Controller
     public function index()
     {
         $tabele = Table::orderBy('order')->orderBy('created_at')->get();
-        return view('admin.tables.index',['tabele'=>$tabele]);
+        return view('decoweb::admin.tables.index',['tabele'=>$tabele]);
     }
 
     /**
@@ -92,7 +93,7 @@ class TablesController extends Controller
     {
         $options = $this->selectTablesOptions();
         $types = $this->selectTypes();
-        return view('admin.tables.create', ['tabele'=>$options,'types'=>$types]);
+        return view('decoweb::admin.tables.create', ['tabele'=>$options,'types'=>$types]);
     }
 
     /**
@@ -394,7 +395,7 @@ BOB;
         $options = $this->selectTablesOptions();
         $types = $this->selectTypes();
 
-        return view('admin.tables.edit',[
+        return view('decoweb::admin.tables.edit',[
             'table'     => $table,
             'settings'  => $settings,
             'tabele'    => $options,

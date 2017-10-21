@@ -13,13 +13,14 @@ class StatusController extends Controller
 
     public function __construct(Status $status)
     {
+        $this->middleware('web');
         $this->middleware('auth');
         $this->statuses = $status->all();
     }
 
     public function index()
     {
-        return view('admin.shop.statuses.index',['statuses' => $this->statuses]);
+        return view('decoweb::admin.shop.statuses.index',['statuses' => $this->statuses]);
     }
 
     public function edit(Request $request, $id)
@@ -28,7 +29,7 @@ class StatusController extends Controller
         if( null == $status){
             return redirect('admin/shop/statuses')->with('mesaj','Acest status nu exista in baza de date.');
         }
-        return view('admin.shop.statuses.edit',['status'=>$status]);
+        return view('decoweb::admin.shop.statuses.edit',['status'=>$status]);
     }
 
     public function update(Request $request, $id)

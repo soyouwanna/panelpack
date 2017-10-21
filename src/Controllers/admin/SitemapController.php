@@ -12,11 +12,16 @@ use Decoweb\Panelpack\Models\Sitemap as Map;
 use Illuminate\Support\Facades\Storage;
 class SitemapController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('web');
+        $this->middleware('auth');
+    }
     public function index()
     {
         $last = Map::first();
         //dd($last->updated_at);
-        return view('admin.sitemap.index',[
+        return view('decoweb::admin.sitemap.index',[
             'last' => $last->updated_at
         ]);
     }

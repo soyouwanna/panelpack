@@ -12,19 +12,20 @@ class TransportController extends Controller
     public function __construct(Transport $transport)
     {
         $this->transport = $transport;
+        $this->middleware('web');
         $this->middleware('auth');
     }
 
     public function index()
     {
         $tr = $this->transport->orderBy('ordine')->orderBy('created_at','desc')->get();
-        return view('admin.shop.transport.index',['transport'=>$tr]);
+        return view('decoweb::admin.shop.transport.index',['transport'=>$tr]);
     }
 
     public function edit($id)
     {
         $transport = $this->transport->findOrFail((int)$id);
-        return view('admin.shop.transport.edit',['transport'=>$transport]);
+        return view('decoweb::admin.shop.transport.edit',['transport'=>$transport]);
     }
 
     public function update(Request $request, $id)
@@ -49,7 +50,7 @@ class TransportController extends Controller
 
     public function create()
     {
-        return view('admin.shop.transport.create');
+        return view('decoweb::admin.shop.transport.create');
     }
 
     public function store(Request $request)
