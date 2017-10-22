@@ -1,4 +1,4 @@
-@include('admin.layouts.parts.header')
+@include('vendor.decoweb.admin.layouts.parts.header')
 <body class="nav-md">
 <div class="container body">
     <div class="main_container">
@@ -12,7 +12,7 @@
                 <div class="clearfix"></div>
                 <br>
 
-            @include('admin.layouts.parts.sidebar')
+            @include('vendor.decoweb.admin.layouts.parts.sidebar')
 
                 <!-- /menu footer buttons -->
                 <div class="sidebar-footer hidden-small">
@@ -95,13 +95,13 @@
                                 <div class="row">
                                     <div class="col-md-7 col-sm-12 col-xs-12 col-md-offset-1">
                                         @if( ! defined('NOERRORS') )
-                                            @include('errors.errors')
+                                            @include('vendor.decoweb.errors.errors')
                                         @endif
                                         @if(session()->has('mesaj'))
-                                            @include('admin.layouts.parts.messages')
+                                            @include('vendor.decoweb.admin.layouts.parts.messages')
                                         @endif
                                         @if(session()->has('aborted'))
-                                            @include('admin.layouts.parts.abortedMessage')
+                                            @include('vendor.decoweb.admin.layouts.parts.abortedMessage')
                                         @endif
                                         @yield('section-content','section-content to add...')
                                     </div>
@@ -113,4 +113,4 @@
             </div>
         </div>
         <!-- /page content -->
-@include('admin.layouts.parts.footer')
+@include('vendor.decoweb.admin.layouts.parts.footer')
