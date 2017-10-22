@@ -23,11 +23,11 @@ class ComposerServiceProvider extends ServiceProvider
         );
 
         View::composer(
-            'admin.layouts.master', 'Decoweb\Panelpack\ViewComposers\TablesMenuComposer'
+            'vendor.decoweb.admin.layouts.master', 'Decoweb\Panelpack\ViewComposers\TablesMenuComposer'
         );
 
         View::composer(
-            'admin.layouts.master', 'Decoweb\Panelpack\ViewComposers\NewOrdersComposer'
+            'vendor.decoweb.admin.layouts.master', 'Decoweb\Panelpack\ViewComposers\NewOrdersComposer'
         );
     }
 
