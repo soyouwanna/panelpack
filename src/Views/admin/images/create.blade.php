@@ -1,4 +1,4 @@
-@extends('admin.layouts.master')
+@extends('vendor.decoweb.admin.layouts.master')
 @section('section-title')
     <a href="{{ url('admin/core/'.$tabela) }}">{{ $pageName }}</a> / {{ $record->$name }}
 @endsection

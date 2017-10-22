@@ -1,4 +1,4 @@
-@extends('admin.layouts.master')
+@extends('vendor.decoweb.admin.layouts.master')
 @section('section-title') Setari transport @endsection
 @section('section-content')
     @if(session()->has('mesaj'))

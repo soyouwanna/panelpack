@@ -1,4 +1,4 @@
-@extends('admin.layouts.master')
+@extends('vendor.decoweb.admin.layouts.master')
 @section('section-title') Status comenzi @endsection
 @section('section-content')
     {!! Form::open(['method'=>'PUT','url'=>'admin/shop/statuses/'.$status->id,'class'=>'form-horizontal']) !!}

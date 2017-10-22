@@ -1,5 +1,5 @@
 <?php define('NOERRORS',1); ?>
-@extends('admin.layouts.master')
+@extends('vendor.decoweb.admin.layouts.master')
 @section('section-title') Utilizatori @endsection
 @section('section-content')
     <div class="panel panel-default">

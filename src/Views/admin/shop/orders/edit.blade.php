@@ -1,4 +1,4 @@
-@extends('admin.layouts.master')
+@extends('vendor.decoweb.admin.layouts.master')
 @section('section-title') Comanda #{{ $order->id }} @endsection
 @section('section-content')
     <div class="panel panel-primary">

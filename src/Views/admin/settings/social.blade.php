@@ -1,4 +1,4 @@
-@extends('admin.layouts.master')
+@extends('vendor.decoweb.admin.layouts.master')
 @section('section-title') Retele sociale @endsection
 @section('header-assets')
     <script type="text/javascript" src="{{ asset('js/jquery.validate.min.js') }}"></script>

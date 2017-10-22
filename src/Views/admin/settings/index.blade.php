@@ -1,4 +1,4 @@
-@extends('admin.layouts.master')
+@extends('vendor.decoweb.admin.layouts.master')
 @section('section-title') Setari generale @endsection
 @section('section-content')
     {!! Form::open(['method'=>'POST','url'=>'admin/settings/update','class'=>'form-horizontal']) !!}

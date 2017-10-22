@@ -1,4 +1,4 @@
-@extends('admin.layouts.master')
+@extends('vendor.decoweb.admin.layouts.master')
 @section('section-title') Editare tabela <strong>{{ $settings['config']['tableName'] }}</strong> @endsection
 @section('footer-assets')
 <script>

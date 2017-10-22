@@ -1,4 +1,4 @@
-@extends('admin.layouts.master')
+@extends('vendor.decoweb.admin.layouts.master')
 @section('section-title') Sitemap @endsection
 @section('section-content')
     <h4>Ultima actualizare: {{ date_format($last,'d-M-Y') }}</h4>
