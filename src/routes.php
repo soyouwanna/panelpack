@@ -47,141 +47,141 @@ Route::post('cart/update','Decoweb\Panelpack\Controllers\CartController@update')
  * ADMIN ROUTES
  *
  ***************************/
-Route::get('admin/home', 'admin\HomeController@index');
-Route::get('admin/home/account', 'admin\HomeController@account');
+Route::get('admin/home', 'Decoweb\Panelpack\Controllers\Admin\HomeController@index');
+Route::get('admin/home/account', 'Decoweb\Panelpack\Controllers\Admin\HomeController@account');
 Route::put('admin/home/account/update/{id}',[
-    'uses'  => 'admin\HomeController@updatePassword',
+    'uses'  => 'Decoweb\Panelpack\Controllers\Admin\HomeController@updatePassword',
     'as'    => 'update.password'
 ]);
 
 /**
  * TABLES
  */
-Route::get('admin/table-settings','admin\TablesController@index');
-Route::get('admin/table-settings/create','admin\TablesController@create');
-Route::get('admin/table-settings/tableDelete/{idTable}','admin\TablesController@delete');
-Route::post('admin/table-settings/table','admin\TablesController@store');
-Route::post('admin/table-settings/tablesOrder','admin\TablesController@updateOrder');
-Route::get('admin/table-settings/{id}/edit','admin\TablesController@edit')->name('tables.edit');
-Route::put('admin/table-settings/{table}','admin\TablesController@update')->name('tables.update');
+Route::get('admin/table-settings','Decoweb\Panelpack\Controllers\Admin\TablesController@index');
+Route::get('admin/table-settings/create','Decoweb\Panelpack\Controllers\Admin\TablesController@create');
+Route::get('admin/table-settings/tableDelete/{idTable}','Decoweb\Panelpack\Controllers\Admin\TablesController@delete');
+Route::post('admin/table-settings/table','Decoweb\Panelpack\Controllers\Admin\TablesController@store');
+Route::post('admin/table-settings/tablesOrder','Decoweb\Panelpack\Controllers\Admin\TablesController@updateOrder');
+Route::get('admin/table-settings/{id}/edit','Decoweb\Panelpack\Controllers\Admin\TablesController@edit')->name('tables.edit');
+Route::put('admin/table-settings/{table}','Decoweb\Panelpack\Controllers\Admin\TablesController@update')->name('tables.update');
 
 /**
  * RECORDS
  */
-Route::match(['get','post'],'admin/core/{tabela}','admin\RecordsController@index');
-Route::get('admin/core/{tabela}/create','admin\RecordsController@create');
+Route::match(['get','post'],'admin/core/{tabela}','Decoweb\Panelpack\Controllers\Admin\RecordsController@index');
+Route::get('admin/core/{tabela}/create','Decoweb\Panelpack\Controllers\Admin\RecordsController@create');
 Route::post('admin/core/{table}/store',[
-    'uses' =>'admin\RecordsController@store',
+    'uses' =>'Decoweb\Panelpack\Controllers\Admin\RecordsController@store',
     'as'   => 'store.record'
 ]);
 Route::get('admin/core/{tabela}/edit/{id}','admin\RecordsController@edit');
 Route::put('admin/core/{tabela}/update/{id}',[
-    'uses' => 'admin\RecordsController@update',
+    'uses' => 'Decoweb\Panelpack\Controllers\Admin\RecordsController@update',
     'as'   => 'record.update'
 ]);
 Route::post('admin/core/{tabela}/recordsActions',[
-    'uses'  => 'admin\RecordsController@recordsActions',
+    'uses'  => 'Decoweb\Panelpack\Controllers\Admin\RecordsController@recordsActions',
     'as'    => 'records.action'
 ]);
 Route::get('admin/core/{tabela}/recordDelete/{id}',[
-    'uses' => 'admin\RecordsController@delete',
+    'uses' => 'Decoweb\Panelpack\Controllers\Admin\RecordsController@delete',
     'as'   => 'record.delete'
 ]);
-Route::get('admin/core/{tableName}/resetFilters','admin\RecordsController@resetFilters');
-Route::post('admin/core/limit/{table}', 'admin\RecordsController@limit');
+Route::get('admin/core/{tableName}/resetFilters','Decoweb\Panelpack\Controllers\Admin\RecordsController@resetFilters');
+Route::post('admin/core/limit/{table}', 'Decoweb\Panelpack\Controllers\Admin\RecordsController@limit');
 
 /**
  * IMAGES
  */
-Route::get('admin/core/{tabela}/addPic/{recordId}', 'admin\ImagesController@create');
+Route::get('admin/core/{tabela}/addPic/{recordId}', 'Decoweb\Panelpack\Controllers\Admin\ImagesController@create');
 
 Route::post('admin/core/{tabela}/storePic/{id}',[
-    'uses' => 'admin\ImagesController@store',
+    'uses' => 'Decoweb\Panelpack\Controllers\Admin\ImagesController@store',
     'as'   => 'store.pic'
 ]);
-Route::get('admin/core/deletePic/{idPic}','admin\ImagesController@delete');
+Route::get('admin/core/deletePic/{idPic}','Decoweb\Panelpack\Controllers\Admin\ImagesController@delete');
 
 Route::post('admin/core/updatePicsOrder/{tableId}/{recordId}',[
-    'uses' => 'admin\ImagesController@update',
+    'uses' => 'Decoweb\Panelpack\Controllers\Admin\ImagesController@update',
     'as'   => 'update.picsOrder'
 ]);
 
 /**
  * FILES
  */
-Route::get('admin/core/{tabela}/addFile/{recordId}', 'admin\FilesController@create');
+Route::get('admin/core/{tabela}/addFile/{recordId}', 'Decoweb\Panelpack\Controllers\Admin\FilesController@create');
 
 Route::post('admin/core/{tabela}/storeFile/{id}',[
-    'uses' => 'admin\FilesController@store',
+    'uses' => 'Decoweb\Panelpack\Controllers\Admin\FilesController@store',
     'as'   => 'store.file'
 ]);
-Route::get('admin/core/deleteFile/{fileId}','admin\FilesController@delete');
+Route::get('admin/core/deleteFile/{fileId}','Decoweb\Panelpack\Controllers\Admin\FilesController@delete');
 
 Route::post('admin/core/updateFilesOrder/{tableId}/{recordId}',[
-    'uses' => 'admin\FilesController@update',
+    'uses' => 'Decoweb\Panelpack\Controllers\Admin\FilesController@update',
     'as'   => 'update.filesOrder'
 ]);
 /**
  * TRANSPORT
  */
-Route::get('admin/shop/transport','admin\TransportController@index');
-Route::get('admin/shop/transport/create','admin\TransportController@create');
-Route::post('admin/shop/transport','admin\TransportController@store');
-Route::post('admin/shop/transport/updateOrder','admin\TransportController@updateOrder');
-Route::get('admin/shop/transport/{id}/edit','admin\TransportController@edit');
-Route::put('admin/shop/transport/{id}','admin\TransportController@update');
-Route::get('admin/shop/transport/{id}/delete','admin\TransportController@destroy');
+Route::get('admin/shop/transport','Decoweb\Panelpack\Controllers\Admin\TransportController@index');
+Route::get('admin/shop/transport/create','Decoweb\Panelpack\Controllers\Admin\TransportController@create');
+Route::post('admin/shop/transport','Decoweb\Panelpack\Controllers\Admin\TransportController@store');
+Route::post('admin/shop/transport/updateOrder','Decoweb\Panelpack\Controllers\Admin\TransportController@updateOrder');
+Route::get('admin/shop/transport/{id}/edit','Decoweb\Panelpack\Controllers\Admin\TransportController@edit');
+Route::put('admin/shop/transport/{id}','Decoweb\Panelpack\Controllers\Admin\TransportController@update');
+Route::get('admin/shop/transport/{id}/delete','Decoweb\Panelpack\Controllers\Admin\TransportController@destroy');
 /**
  * CUSTOMERS
  */
-Route::get('admin/shop/customers','admin\CustomerController@index');
-Route::post('admin/shop/customers','admin\CustomerController@store');
-Route::post('admin/shop/customers/updateLimit','admin\CustomerController@updateLimit');
-Route::get('admin/shop/customers/create','admin\CustomerController@create');
-Route::get('admin/shop/customers/{id}/edit','admin\CustomerController@edit');
-Route::put('admin/shop/customers/{id}','admin\CustomerController@update');
-Route::get('admin/shop/customers/{id}/delete','admin\CustomerController@destroy');
-Route::post('admin/shop/customers/deleteMultiple','admin\CustomerController@deleteMultiple');
+Route::get('admin/shop/customers','Decoweb\Panelpack\Controllers\Admin\CustomerController@index');
+Route::post('admin/shop/customers','Decoweb\Panelpack\Controllers\Admin\CustomerController@store');
+Route::post('admin/shop/customers/updateLimit','Decoweb\Panelpack\Controllers\Admin\CustomerController@updateLimit');
+Route::get('admin/shop/customers/create','Decoweb\Panelpack\Controllers\Admin\CustomerController@create');
+Route::get('admin/shop/customers/{id}/edit','Decoweb\Panelpack\Controllers\Admin\CustomerController@edit');
+Route::put('admin/shop/customers/{id}','Decoweb\Panelpack\Controllers\Admin\CustomerController@update');
+Route::get('admin/shop/customers/{id}/delete','Decoweb\Panelpack\Controllers\Admin\CustomerController@destroy');
+Route::post('admin/shop/customers/deleteMultiple','Decoweb\Panelpack\Controllers\Admin\CustomerController@deleteMultiple');
 /**
  * INVOICES
  */
-Route::get('admin/shop/invoice','admin\InvoiceController@index');
-Route::get('cart/vizualizareProforma/{id}/{code}','ProformaController@index');
-Route::put('admin/shop/invoice/{id}','admin\InvoiceController@update');
+Route::get('admin/shop/invoice','Decoweb\Panelpack\Controllers\Admin\InvoiceController@index');
+Route::get('cart/vizualizareProforma/{id}/{code}','Decoweb\Panelpack\Controllers\ProformaController@index');
+Route::put('admin/shop/invoice/{id}','Decoweb\Panelpack\Controllers\Admin\InvoiceController@update');
 /**
  * STATUSES
  */
-Route::get('admin/shop/statuses','admin\StatusController@index');
-Route::get('admin/shop/statuses/{id}/edit','admin\StatusController@edit');
-Route::put('admin/shop/statuses/{id}','admin\StatusController@update');
+Route::get('admin/shop/statuses','Decoweb\Panelpack\Controllers\Admin\StatusController@index');
+Route::get('admin/shop/statuses/{id}/edit','Decoweb\Panelpack\Controllers\Admin\StatusController@edit');
+Route::put('admin/shop/statuses/{id}','Decoweb\Panelpack\Controllers\Admin\StatusController@update');
 /**
  * ORDERS
  */
-Route::resource('admin/shop/orders', 'admin\OrdersController', ['except' => [
+Route::resource('admin/shop/orders', 'Decoweb\Panelpack\Controllers\Admin\OrdersController', ['except' => [
     'create', 'store', 'show', 'destroy'
 ]]);
-Route::get('admin/shop/orders/{id}/delete/','admin\OrdersController@destroy');
-Route::put('admin/shop/orders/{id}/updateStatus/','admin\OrdersController@updateStatus');
-Route::post('admin/shop/orders/{id}/updateQuantity/','admin\OrdersController@updateQuantity');
-Route::put('admin/shop/orders/{id}/updateTransportPrice/','admin\OrdersController@updateTransportPrice');
-Route::get('admin/shop/orders/{order}/item/{orderedItem}/delete/','admin\OrdersController@destroyItem');
-Route::post('admin/shop/ordersByStatus','admin\OrdersController@ordersByStatus');
-Route::post('admin/shop/orders/updateLimit','admin\OrdersController@updateLimit');
-Route::post('admin/shop/orders/deleteMultiple','admin\OrdersController@deleteMultiple');
+Route::get('admin/shop/orders/{id}/delete/','Decoweb\Panelpack\Controllers\Admin\OrdersController@destroy');
+Route::put('admin/shop/orders/{id}/updateStatus/','Decoweb\Panelpack\Controllers\Admin\OrdersController@updateStatus');
+Route::post('admin/shop/orders/{id}/updateQuantity/','Decoweb\Panelpack\Controllers\Admin\OrdersController@updateQuantity');
+Route::put('admin/shop/orders/{id}/updateTransportPrice/','Decoweb\Panelpack\Controllers\Admin\OrdersController@updateTransportPrice');
+Route::get('admin/shop/orders/{order}/item/{orderedItem}/delete/','Decoweb\Panelpack\Controllers\Admin\OrdersController@destroyItem');
+Route::post('admin/shop/ordersByStatus','Decoweb\Panelpack\Controllers\Admin\OrdersController@ordersByStatus');
+Route::post('admin/shop/orders/updateLimit','Decoweb\Panelpack\Controllers\Admin\OrdersController@updateLimit');
+Route::post('admin/shop/orders/deleteMultiple','Decoweb\Panelpack\Controllers\Admin\OrdersController@deleteMultiple');
 /**
  * GOOGLE MAP
  */
-Route::get('admin/maps','admin\MapsController@index');
-Route::post('admin/maps/update','admin\MapsController@update');
+Route::get('admin/maps','Decoweb\Panelpack\Controllers\Admin\MapsController@index');
+Route::post('admin/maps/update','Decoweb\Panelpack\Controllers\Admin\MapsController@update');
 /**
  * SETTINGS
  */
-Route::get('admin/settings','admin\SettingsController@index');
-Route::get('admin/settings/social','admin\SettingsController@social');
-Route::post('admin/settings/update','admin\SettingsController@update');
-Route::post('admin/settings/social/update','admin\SettingsController@updateSocial');
+Route::get('admin/settings','Decoweb\Panelpack\Controllers\Admin\SettingsController@index');
+Route::get('admin/settings/social','Decoweb\Panelpack\Controllers\Admin\SettingsController@social');
+Route::post('admin/settings/update','Decoweb\Panelpack\Controllers\Admin\SettingsController@update');
+Route::post('admin/settings/social/update','Decoweb\Panelpack\Controllers\Admin\SettingsController@updateSocial');
 /**
  * SITEMAP
  */
-Route::get('admin/sitemap','admin\SitemapController@index');
-Route::post('admin/sitemap/regenerate','admin\SitemapController@regenerate');
+Route::get('admin/sitemap','Decoweb\Panelpack\Controllers\Admin\SitemapController@index');
+Route::post('admin/sitemap/regenerate','Decoweb\Panelpack\Controllers\Admin\SitemapController@regenerate');
