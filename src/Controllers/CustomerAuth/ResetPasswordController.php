@@ -24,7 +24,7 @@ class ResetPasswordController extends Controller
     protected $redirectTo = '/';
     public function showResetForm(Request $request, $token = null)
     {
-        return view('customers.auth.passwords.reset')->with(
+        return view('decoweb::customers.auth.passwords.reset')->with(
             ['token' => $token, 'email' => $request->email]
         );
     }

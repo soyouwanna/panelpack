@@ -13,6 +13,7 @@ class ProformaController extends Controller
 
     public function __construct(Invoice $invoice)
     {
+        $this->middleware('web');
         $this->invoice = $invoice->first();
     }
 
@@ -41,7 +42,7 @@ class ProformaController extends Controller
         $transportVAT = number_format($order->price_transport - $transportNoVAT,2);
         $itemsNoVAT += $transportNoVAT;
         $itemsVAT += $transportVAT;
-        return view('admin.shop.invoice.proforma',[
+        return view('decoweb::admin.shop.invoice.proforma',[
             'invoice'           => $this->invoice,
             'order'             => $order,
             'items'             => $items,

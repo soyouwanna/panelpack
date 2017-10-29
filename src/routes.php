@@ -74,7 +74,7 @@ Route::post('admin/core/{table}/store',[
     'uses' =>'Decoweb\Panelpack\Controllers\Admin\RecordsController@store',
     'as'   => 'store.record'
 ]);
-Route::get('admin/core/{tabela}/edit/{id}','admin\RecordsController@edit');
+Route::get('admin/core/{tabela}/edit/{id}','Decoweb\Panelpack\Controllers\Admin\RecordsController@edit');
 Route::put('admin/core/{tabela}/update/{id}',[
     'uses' => 'Decoweb\Panelpack\Controllers\Admin\RecordsController@update',
     'as'   => 'record.update'

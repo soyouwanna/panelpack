@@ -7,7 +7,7 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Lang;
-use App\Customer;
+use Decoweb\Panelpack\Models\Customer;
 class LoginController extends Controller
 {
     /*
@@ -46,7 +46,7 @@ class LoginController extends Controller
         if($toCheckout3 != null && (int)trim($toCheckout3) == 1 ){
             session(['toCheckout3'=>1]);
         }
-        return view('customers.auth.login');
+        return view('decoweb::customers.auth.login');
     }
 
     public function redirectPath()

@@ -38,7 +38,7 @@ class RegisterController extends Controller
 
     public function showRegistrationForm()
     {
-        return view('customers.auth.register');
+        return view('decoweb::customers.auth.register');
     }
 
     protected function guard()

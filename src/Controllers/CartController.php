@@ -30,6 +30,7 @@ class CartController extends Controller
     public function __construct(Magazin $magazin)
     {
         # If customer is logged, skip checkout2
+        $this->middleware('web');
         $this->middleware('customer')->only('checkout2');
         $this->magazin = $magazin;
         $this->category = $magazin->getCategory();
@@ -47,7 +48,7 @@ class CartController extends Controller
         }
         $pics = $pictures->setModel('Product')->getPics();
         //dd($pics);
-        return view('cart.index', ['url'=>$url, 'pics'=>$pics]);
+        return view('decoweb::cart.index', ['url'=>$url, 'pics'=>$pics]);
     }
 
     public function checkout2()
@@ -55,7 +56,7 @@ class CartController extends Controller
         if ( Cart::count() == 0 ){
             return redirect('/');
         }
-        return view('cart.checkout2');
+        return view('decoweb::cart.checkout2');
     }
 
     public function checkout3()
@@ -73,12 +74,12 @@ class CartController extends Controller
         foreach ($transportItems as $item){
             $transport[$item->id] = $item->name.' / '.$item->price.' '.config('settings.magazin.currency');
         }
-        return view('cart.checkout3', ['customer' => $customer, 'transport'=>$transport]);
+        return view('decoweb::cart.checkout3', ['customer' => $customer, 'transport'=>$transport]);
     }
 
     public function checkout4()
     {
-        return view('cart.checkout4');
+        return view('decoweb::cart.checkout4');
     }
 
     private function rules()
