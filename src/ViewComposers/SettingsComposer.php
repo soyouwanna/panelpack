@@ -15,7 +15,11 @@ class SettingsComposer
             $this->sysSettings[$setting->name] = $setting->value;
         }
         $map = Map::first();
-        $this->sysSettings['address'] = $map->address;
+        if( null == $map ){
+            $this->sysSettings['address']='Map info not set.';
+        }else{
+            $this->sysSettings['address'] = $map->address;
+        }
     }
 
     public function compose(View $view)

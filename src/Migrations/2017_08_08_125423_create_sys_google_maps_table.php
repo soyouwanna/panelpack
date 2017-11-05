@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
-
+use DB;
 class CreateSysGoogleMapsTable extends Migration
 {
     /**
@@ -23,6 +23,19 @@ class CreateSysGoogleMapsTable extends Migration
             $table->string('address',200);
             $table->timestamps();
         });
+        if( Schema::hasTable('sys_google_maps') ){
+            DB::table('sys_google_maps')->insert([
+                [
+                    'id'=>1,
+                    'latitude'=>44.206966,
+                    'longitude'=>28.643729,
+                    'company'=>'NumeFirma',
+                    'region'=>'Constanta',
+                    'city'=>'Constanta',
+                    'address'=>'Strada NumeStrada nr.22',
+                ],
+            ]);
+        }
     }
 
     /**
