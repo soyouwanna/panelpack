@@ -8,22 +8,6 @@ Install the package through [Composer](http://getcomposer.org/).
 
     composer require decoweb/panelpack
 
-Run vendor:publish
-```
-composer vendor:publish
-```
-Before installing the migrations, don't forget:
-1) to delete the shopping cart migration already published, since Panelpack has its own migration for it;
-2) to modify _App\Providers\AppServiceProvider.php_ :
-```
-use Illuminate\Support\Facades\Schema;
-public function boot()
-    {
-        Schema::defaultStringLength(191);
-    }
-```
-Run the _php artisan migrate_.
-
 Add the following providers to **config/app.php** :
 ```
 Collective\Html\HtmlServiceProvider::class,
@@ -49,6 +33,22 @@ And to aliases:
 'PDF' => Barryvdh\DomPDF\Facade::class,
 'Sitemap' => Watson\Sitemap\Facades\Sitemap::class,
 ```
+
+Run vendor:publish
+```
+php artisan vendor:publish
+```
+Before installing the migrations, don't forget:
+1) to delete the shopping cart migration already published, since Panelpack has its own migration for it;
+2) to modify _App\Providers\AppServiceProvider.php_ :
+```
+use Illuminate\Support\Facades\Schema;
+public function boot()
+    {
+        Schema::defaultStringLength(191);
+    }
+```
+Run the _php artisan migrate_.
 
 To the _App\Http\Kernel.php_, add the following middlewares:
 ```
