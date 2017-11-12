@@ -1,5 +1,4 @@
 <?php
-
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
@@ -27,7 +26,6 @@ class CreateImagesTable extends Migration
         if(Schema::hasTable('images')) {
             Schema::table('images', function (Blueprint $table) {
                 $table->foreign('table_id')->references('id')->on('sys_core_setups')->onDelete('cascade');
-                #$table->foreign('record_id')->references('id')->on('brands')->onDelete('cascade');
             });
         }
     }

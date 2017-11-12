@@ -55,5 +55,8 @@ class PanelPackProvider extends ServiceProvider
     public function register()
     {
         $this->mergeConfigFrom( __DIR__.'/config/disks.php','filesystems.disks');
+        $this->mergeConfigFrom( __DIR__.'/config/auth.php','auth');
+        $this->mergeConfigFrom( __DIR__.'/config/cart.php','cart');
+        $this->mergeConfigFrom( __DIR__.'/config/lfm.php','lfm');
     }
 }
