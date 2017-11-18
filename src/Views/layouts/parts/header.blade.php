@@ -9,7 +9,7 @@
     <title>@yield('meta_title') {{ $site_settings['site_name'] }} - {{ $site_settings['city'] }}</title>
     <meta name="description" content="@yield('meta_description',$site_settings['meta_description'])">
     <meta name="keywords" content="@yield('meta_keywords',$site_settings['meta_keywords'])">
-    @include('layouts.meta.og')
+    @include('vendor.decoweb.layouts.meta.og')
 
     @yield('header-assets')
 

@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('vendor.decoweb.layouts.app')
 @section('content')
 
     <div class="tm_pb_section  tm_pb_section_0 tm_section_regular tm_section_transparent">

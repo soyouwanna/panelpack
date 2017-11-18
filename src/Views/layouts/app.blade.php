@@ -1,4 +1,4 @@
-@include('layouts.parts.header')
+@include('vendor.decoweb.layouts.parts.header')
 {{--@include('errors.errors')--}}
 @yield('content','content not defined')
-@include('layouts.parts.footer')
+@include('vendor.decoweb.layouts.parts.footer')
