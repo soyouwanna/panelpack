@@ -42,7 +42,7 @@ return [
 
     // Which folder to store files in project, fill in 'public', 'resources', 'storage' and so on.
     // You should create routes to serve images if it is not set to public.
-    'base_directory' => 'public',
+    'base_directory' => env('LFM_BASE_DIR', 'public'),
     // On server
     #'base_directory' => '../public_html/quizcat.net',
 

@@ -26,7 +26,7 @@ class MagazinServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind('App\Helpers\Contracts\MagazinContract', function(){
+        $this->app->bind('Decoweb\Panelpack\Helpers\Contracts\MagazinContract', function(){
 
             return new Magazin(new Category(),new Product());
 
