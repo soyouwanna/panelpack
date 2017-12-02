@@ -1,9 +1,7 @@
 <?php
 return[
-    'guards' => [
-        'customer' => [
-            'driver' => 'session',
-            'provider' => 'customers',
-        ],
+    'customer' => [
+        'driver' => 'session',
+        'provider' => 'customers',
     ],
 ];

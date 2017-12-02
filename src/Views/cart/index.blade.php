@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('vendor.decoweb.layouts.app')
 @section('content')
     @if(session()->has('mesaj'))
         <div class="alert alert-success text-center" role="alert">
