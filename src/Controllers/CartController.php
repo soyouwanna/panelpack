@@ -215,7 +215,7 @@ class CartController extends Controller
         }
 
         if( ! in_array($rowId,$rows)){
-            return response()->view('errors.404',[
+            return response()->view('decoweb::errors.404',[
                 'tell'=>'Produsul pe care doriti sa-l stergeti nu exista in cos.',
             ],404);
         }

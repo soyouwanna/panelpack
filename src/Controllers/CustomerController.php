@@ -34,13 +34,13 @@ class CustomerController extends Controller
         }elseif( $customer->email && $customer->verified == 0 ){
             $status = 'Adresa de email nu este confirmata. Va rugam sa urmati linkul de confirmare primit.';
         }
-        return view('customers.profile',['customer'=>$customer, 'status'=>$status]);
+        return view('decoweb::customers.profile',['customer'=>$customer, 'status'=>$status]);
     }
 
     public function myOrders()
     {
         $orders = Order::where('customer_id', (int)Auth::guard('customer')->user()->id )->orderBy('created_at','desc')->get();
-        return view('customers.myorders',[
+        return view('decoweb::customers.myorders',[
             'orders'    => $orders,
         ]);
     }
@@ -87,7 +87,6 @@ class CustomerController extends Controller
                 ->withErrors($validator)
                 ->withInput();
         }
-        //dd($request->all());
 
         if($request->account_type == 0){
             $customer->account_type = 0;
@@ -126,7 +125,7 @@ class CustomerController extends Controller
      */
     public function newPassword()
     {
-        return view('customers.auth.passwords.update');
+        return view('decoweb::customers.auth.passwords.update');
     }
 
     /**
@@ -159,10 +158,5 @@ class CustomerController extends Controller
     {
         $customer = Customer::find($id);
         return $customer;
-    }
-    #for testing - just for verified users
-    public function go()
-    {
-        return 'ok!';
     }
 }

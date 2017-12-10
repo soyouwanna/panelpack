@@ -1,8 +1,24 @@
 <?php
-Route::get('tester', function(){
-    return 555;
-})->middleware('web');
+/*
+ * Starter Kit
+ */
+use App\User;
 
+Route::get('/start', function () {
+    //return dd(config('imagecache.templates'));
+    return view('decoweb::start');
+});
+Route::post('/kit',function(){
+    if( !empty($_POST['email']) && !empty($_POST['password']) ){
+        $admin = new User();
+        $admin->name = 'Admin';
+        $admin->email = $_POST['email'];
+        $admin->password = bcrypt($_POST['password']);
+        $admin->save();
+        return redirect('/start');
+    }
+    return redirect('/start');
+});
 # customer
 Route::get('/customer/login/{cart?}','Decoweb\Panelpack\Controllers\CustomerAuth\LoginController@showLoginForm');
 Route::post('/customer/login','Decoweb\Panelpack\Controllers\CustomerAuth\LoginController@login');

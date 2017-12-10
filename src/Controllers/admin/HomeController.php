@@ -31,7 +31,7 @@ class HomeController extends Controller
 
     public function account()
     {
-        $user = User::findOrFail(1);
+        $user = User::first();
         return view('decoweb::admin.account',[
             'user' => $user,
         ]);
