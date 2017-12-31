@@ -30,7 +30,7 @@ class CustomerController extends Controller
 
     public function index()
     {
-        $perPage = DB::table('sys_shop_setups')->pluck('customers_per_page')->first();
+        $perPage = DB::table('sys_shop_setups')->select('value')->where('action','customers_per_page')->first();
 
         $ord = ['asc','desc'];
         if (request()->has('name') && in_array( request('name'),$ord ) ) {
@@ -52,7 +52,7 @@ class CustomerController extends Controller
         $this->validate($request,[
            'perPage'    => 'required|integer'
         ]);
-        DB::table('sys_shop_setups')->where('id',1)->update(['customers_per_page'=>$request->perPage]);
+        DB::table('sys_shop_setups')->where('action','customers_per_page')->update(['value'=>$request->perPage]);
         return redirect('admin/shop/customers');
     }
 

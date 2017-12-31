@@ -61,7 +61,7 @@
                                 </li>
                             </ul>
                         </li>
-                        @if( config('settings.magazin') === true )
+                        @if( config('shop.active') === true )
                         <li role="presentation" class="dropdown">
                             <a href="{{ url('admin/shop/orders') }}" class="dropdown-toggle info-number"  aria-expanded="false">
                                 @if( $newOrders != 0 )

@@ -8,6 +8,7 @@ use Decoweb\Panelpack\Models\Order;
 use Decoweb\Panelpack\Models\Ordereditem;
 use Decoweb\Panelpack\Models\Proforma;
 use Decoweb\Panelpack\Models\Status;
+use Decoweb\Panelpack\Models\SysSetting;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\OrderStatusChange;
 use DB;
@@ -24,7 +25,7 @@ class OrdersController extends Controller
 
     public function index(Request $request)
     {
-        $perPage = DB::table('sys_shop_setups')->pluck('orders_per_page')->first();
+        $perPage = DB::table('sys_shop_setups')->select('value')->where('action','orders_per_page')->first();
         $direction = ['asc', 'desc'];
         $orders = (new $this->orders)->newQuery();
         $key = '';
@@ -59,7 +60,7 @@ class OrdersController extends Controller
         //dd($selectStatus);
 
         if( !empty($key) && !empty($value) && in_array($value, $direction)){
-            return view('admin.shop.orders.index',[
+            return view('decoweb::admin.shop.orders.index',[
                 'selectStatus'  => $selectStatus ,
                 'orders'        => $orders->paginate($perPage)->appends($key, $value),
                 'perPage'       => $perPage,
@@ -78,7 +79,7 @@ class OrdersController extends Controller
         $this->validate($request,[
             'perPage'    => 'required|integer'
         ]);
-        DB::table('sys_shop_setups')->where('id',1)->update(['orders_per_page'=>$request->perPage]);
+        DB::table('sys_shop_setups')->where('action','orders_per_page')->update(['value'=>$request->perPage]);
         return redirect('admin/shop/orders');
     }
 
@@ -124,7 +125,8 @@ class OrdersController extends Controller
         $order->status_id = (int)trim($request->status);
         $order->save();
         Mail::to($order->email)->send( new OrderStatusChange($order->id));
-        Mail::to('andrei.stiuca@yahoo.fr')->send( new OrderStatusChange($order->id, true));
+        $contactMail = SysSetting::select('value')->where('name','contact_email')->first();
+        Mail::to($contactMail)->send( new OrderStatusChange($order->id, true));
         return redirect('admin/shop/orders/'.$id.'/edit/')->with('mesaj','Statusul comenzii a fost schimbat');
     }
 
