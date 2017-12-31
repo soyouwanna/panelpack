@@ -20,3 +20,8 @@
     </script>
 </head>
 <body>
+@if( config('shop.active') === true )
+    <div>
+    @include('vendor.decoweb.layouts.scripts.cart_menu_top')
+    </div>
+@endif
