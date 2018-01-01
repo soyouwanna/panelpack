@@ -64,17 +64,17 @@ class CustomerController extends Controller
         $address = "/^[A-Za-zĂÎÂŞŢăîâşţ0-9\.\-\s\,]+$/";
         $rules = [
             'account_type'  => 'required|in:0,1' ,
-            'name'          => 'required_if:account_type,0|regex:'.$alphaDashSpaces,
-            'phone'         => 'required_if:account_type,0|regex:'.$numbers,
-            'cnp'           => 'required_if:account_type,0|digits:13',
-            'region'        => 'required_if:account_type,0|regex:'.$alphaDashSpaces,
-            'city'          => 'required_if:account_type,0|regex:'.$alphaDashSpaces,
+            'name'          => 'required_if:account_type,0|nullable|regex:'.$alphaDashSpaces,
+            'phone'         => 'required_if:account_type,0|nullable|regex:'.$numbers,
+            'cnp'           => 'required_if:account_type,0|nullable|digits:13',
+            'region'        => 'required_if:account_type,0|nullable|regex:'.$alphaDashSpaces,
+            'city'          => 'required_if:account_type,0|nullable|regex:'.$alphaDashSpaces,
             'address'       => 'required|regex:'.$address,
-            'company'       => 'required_if:account_type,1|regex:'.$alphaDashSpacesNum,
-            'rc'            => 'required_if:account_type,1|alpha_num',
-            'cif'           => 'required_if:account_type,1|alpha_num',
-            'bank_account'  => 'required_if:account_type,1|alpha_num',
-            'bank_name'     => 'required_if:account_type,1|regex:'.$alphaDashSpaces,
+            'company'       => 'required_if:account_type,1|nullable|regex:'.$alphaDashSpacesNum,
+            'rc'            => 'required_if:account_type,1|nullable|alpha_num',
+            'cif'           => 'required_if:account_type,1|nullable|alpha_num',
+            'bank_account'  => 'required_if:account_type,1|nullable|alpha_num',
+            'bank_name'     => 'required_if:account_type,1|nullable|regex:'.$alphaDashSpaces,
         ];
         if ( empty($customer->email) ){
             $rules['email'] = 'required|email';

@@ -25,7 +25,7 @@ class OrdersController extends Controller
 
     public function index(Request $request)
     {
-        $perPage = DB::table('sys_shop_setups')->select('value')->where('action','orders_per_page')->first();
+        $perPage = DB::table('sys_shop_setups')->where('action','orders_per_page')->pluck('value')->first();
         $direction = ['asc', 'desc'];
         $orders = (new $this->orders)->newQuery();
         $key = '';

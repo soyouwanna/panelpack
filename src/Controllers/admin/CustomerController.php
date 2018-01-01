@@ -30,8 +30,7 @@ class CustomerController extends Controller
 
     public function index()
     {
-        $perPage = DB::table('sys_shop_setups')->select('value')->where('action','customers_per_page')->first();
-
+        $perPage = DB::table('sys_shop_setups')->where('action','customers_per_page')->pluck('value')->first();
         $ord = ['asc','desc'];
         if (request()->has('name') && in_array( request('name'),$ord ) ) {
             $name = request('name');

@@ -71,19 +71,19 @@ class RegisterController extends Controller
         ];
         return Validator::make($data, [
             'account_type'  => 'required|in:0,1' ,
-            'name'          => 'required_if:account_type,0|max:255|regex:'.$this->alphaDashSpaces,
+            'name'          => 'required_if:account_type,0|max:255|nullable|regex:'.$this->alphaDashSpaces,
             'email'         => 'required|email|max:255|unique:customers,email',
             'password'      => 'required|min:6|confirmed',
-            'phone'         => 'required_if:account_type,0|regex:'.$this->numbers,
-            'cnp'           => 'required_if:account_type,0|digits:13',
-            'region'        => 'required_if:account_type,0|regex:'.$this->alphaDashSpaces,
-            'city'          => 'required_if:account_type,0|regex:'.$this->alphaDashSpaces,
+            'phone'         => 'required_if:account_type,0|nullable|regex:'.$this->numbers,
+            'cnp'           => 'required_if:account_type,0|nullable|digits:13',
+            'region'        => 'required_if:account_type,0|nullable|regex:'.$this->alphaDashSpaces,
+            'city'          => 'required_if:account_type,0|nullable|regex:'.$this->alphaDashSpaces,
             'address'       => 'required|regex:'.$this->address,
-            'company'       => 'required_if:account_type,1|regex:'.$this->alphaDashSpacesNum,
-            'rc'            => 'required_if:account_type,1|regex:'.$this->alphaNumSlash,
-            'cif'           => 'required_if:account_type,1|alpha_num',
-            'bank_account'  => 'required_if:account_type,1|alpha_num',
-            'bank_name'     => 'required_if:account_type,1|regex:'.$this->alphaDashSpaces,
+            'company'       => 'required_if:account_type,1|nullable|regex:'.$this->alphaDashSpacesNum,
+            'rc'            => 'required_if:account_type,1|nullable|regex:'.$this->alphaNumSlash,
+            'cif'           => 'required_if:account_type,1|nullable|alpha_num',
+            'bank_account'  => 'required_if:account_type,1|nullable|alpha_num',
+            'bank_name'     => 'required_if:account_type,1|nullable|regex:'.$this->alphaDashSpaces,
         ], $messages);
     }
 

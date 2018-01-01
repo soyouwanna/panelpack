@@ -32,6 +32,7 @@ class PanelPackProvider extends ServiceProvider
 
         $this->publishes([
             __DIR__.'/config/settings.php' => config_path('settings.php'),
+            __DIR__.'/config/shop.php' => config_path('shop.php'),
         ], 'config');
 
         $this->publishes([
