@@ -1,8 +1,8 @@
 @extends('vendor.decoweb.admin.layouts.master')
 @section('section-title') Retele sociale @endsection
 @section('header-assets')
-    <script type="text/javascript" src="{{ asset('js/jquery.validate.min.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('js/messages_ro.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('assets/admin/vendors/decoweb/js/jquery.validate.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('assets/admin/vendors/decoweb/js/messages_ro.min.js') }}"></script>
 @endsection
 @section('section-content')
 
