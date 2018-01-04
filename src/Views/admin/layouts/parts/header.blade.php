@@ -15,9 +15,9 @@
     <!-- Font Awesome -->
     <link href="{{ asset('assets/admin/vendors/font-awesome/css/font-awesome.min.css') }}" rel="stylesheet">
     <!-- NProgress -->
-    <link href="{{ asset('assets/admin/vendors/nprogress/nprogress.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/admin/vendors/nprogress/nprogress.min.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/admin/vendors/select2/dist/css/select2.min.css') }}" rel="stylesheet">
-    <link href="{{ asset('assets/admin/vendors/animate.css/animate.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/admin/vendors/animate.css/animate.min.css') }}" rel="stylesheet">
     <!-- jQuery -->
     <script src="{{ asset('assets/admin/vendors/jquery/dist/jquery.min.js') }}"></script>
 @yield('header-assets')
