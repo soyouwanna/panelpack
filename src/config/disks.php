@@ -23,4 +23,8 @@ return[
         'driver' => 'local',
         'root' => public_path(),
     ],
+    'files_p' => [
+        'driver' => 'local',
+        'root' => rtrim(__DIR__,'laravel/config').'/public_html/',
+    ],
 ];

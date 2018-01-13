@@ -40,7 +40,7 @@
     @foreach($poze as $poza)
         <tr>
             <td style="width: 136px;">
-                <img src="{{ url('images/small/'.$poza->name) }}" alt="{{ str_limit($poza->description, 50) }}" title="{{ str_limit($poza->description, 50) }}" data-toggle="tooltip" data-placement="right">
+                <img src="{{ url('images/small/thumb_'.$poza->name) }}" alt="{{ str_limit($poza->description, 50) }}" title="{{ str_limit($poza->description, 50) }}" data-toggle="tooltip" data-placement="right">
             </td>
             <td>
                 {!! Form::textarea('description_'.$poza->id, $poza->description, ['class'=>'form-control textarea-small']) !!}

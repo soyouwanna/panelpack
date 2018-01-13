@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Decoweb\Panelpack\Models\SysCoreSetup as Table;
 use Decoweb\Panelpack\Models\Image as Poza;
+use Image;
 use Illuminate\Support\Facades\Storage;
 
 class ImagesController extends Controller
@@ -152,9 +153,18 @@ class ImagesController extends Controller
         $pic->save();
 
         // Store file on disk
-        $path = $request->file('pic')->storeAs('uploads', $picName);
+        $img = Image::make( $request->file('pic'));
+        if( $img->height() > 640 ){
+            $img->resize(null, 640, function ($constraint) {
+                $constraint->aspectRatio();
+            });
+        }
+        $img->save(storage_path('app/uploads/'.$picName), 65);
+        $img->resize(null,90,function ($constraint) {
+            $constraint->aspectRatio();
+        })->save(storage_path('app/uploads/thumb_'.$picName), 75);
 
-        $request->session()->flash('mesaj','Poza a fost adugata in '.$path);
+        $request->session()->flash('mesaj','Poza a fost adugata.');
         return redirect('admin/core/'.$tabela.'/addPic/'.$recordId);
     }
 
@@ -177,6 +187,7 @@ class ImagesController extends Controller
         $recordId = $pic->record_id;
 
         Storage::disk('uploads')->delete($pic->name);
+        Storage::disk('uploads')->delete('thumb_'.$pic->name);
         $pic->delete();
 
         return redirect('admin/core/'.$tableName.'/addPic/'.$recordId);

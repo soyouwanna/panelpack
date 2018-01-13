@@ -7,19 +7,21 @@ use Decoweb\Panelpack\Models\Customer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Cart;
+use Decoweb\Panelpack\Models\SysSetting;
 use Decoweb\Panelpack\Models\Transport;
 use Decoweb\Panelpack\Models\Order;
 use Decoweb\Panelpack\Models\Ordereditem;
 use Decoweb\Panelpack\Models\Proforma;
-use Decoweb\Panelpack\Helpers\Contracts\MagazinContract as Magazin;
+use Decoweb\Panelpack\Helpers\Contracts\ShopContract as Shop;
 use Decoweb\Panelpack\Helpers\Contracts\PicturesContract as Pictures;
 use App\Mail\NewOrderConfirm;
 use Illuminate\Support\Facades\Mail;
 class CartController extends Controller
 {
-    private $magazin;
+    private $shop;
     private $category;
-    private $produse;
+    private $products;
+    private $settings;
     # Validation regex
     private $alphaDashSpaces = '/^[A-Za-z \-ĂÎÂŞŢăîâşţ]+$/';
     private $alphaDashSpacesNum = '/^[A-Za-z0-9\s\-ĂÎÂŞŢăîâşţ]+$/';
@@ -27,14 +29,15 @@ class CartController extends Controller
     private $address = "/^[A-Za-zĂÎÂŞŢăîâşţ0-9\.\-\s\,]+$/";
     private $alphaNumSlash = '/^[A-Za-z0-9\/\-\.]+$/';
 
-    public function __construct(Magazin $magazin)
+    public function __construct(Shop $shop, SysSetting $sysSetting)
     {
         # If customer is logged, skip checkout2
         $this->middleware('web');
         $this->middleware('customer')->only('checkout2');
-        $this->magazin = $magazin;
-        $this->category = $magazin->getCategory();
-        $this->produse = $magazin->getProducts();
+        $this->shop = $shop;
+        $this->category = $shop->categoryModel();
+        $this->products = $shop->productModel();
+        $this->settings = $sysSetting;
     }
 
     public function index(Pictures $pictures)
@@ -93,20 +96,20 @@ class CartController extends Controller
         $rules = [
             'account_type'      => 'required|in:0,1' ,
             'transport'         => 'required|in:'.$allowedTransportIds ,
-            'name'              => 'required_if:account_type,0|regex:'.$this->alphaDashSpaces,
-            'phone'             => 'required_if:account_type,0|regex:'.$this->numbers,
+            'name'              => 'required_if:account_type,0|nullable|regex:'.$this->alphaDashSpaces,
+            'phone'             => 'required_if:account_type,0|nullable|regex:'.$this->numbers,
             'email'             => 'required|email',
-            'cnp'               => 'required_if:account_type,0|digits:13',
-            'region'            => 'required_if:account_type,0|regex:'.$this->alphaDashSpaces,
-            'city'              => 'required_if:account_type,0|regex:'.$this->alphaDashSpaces,
+            'cnp'               => 'required_if:account_type,0|nullable|digits:13',
+            'region'            => 'required_if:account_type,0|nullable|regex:'.$this->alphaDashSpaces,
+            'city'              => 'required_if:account_type,0|nullable|regex:'.$this->alphaDashSpaces,
             'address'           => 'required|regex:'.$this->address,
             'same_address'      => 'in:1',
-            'delivery_address'  => 'required_without:same_address|regex:'.$this->address,
-            'company'           => 'required_if:account_type,1|regex:'.$this->alphaDashSpacesNum,
-            'rc'                => 'required_if:account_type,1|regex:'.$this->alphaNumSlash,
-            'cif'               => 'required_if:account_type,1|alpha_num',
-            'bank_account'      => 'required_if:account_type,1|alpha_num',
-            'bank_name'         => 'required_if:account_type,1|regex:'.$this->alphaDashSpaces,
+            'delivery_address'  => 'required_without:same_address|nullable|regex:'.$this->address,
+            'company'           => 'required_if:account_type,1|nullable|regex:'.$this->alphaDashSpacesNum,
+            'rc'                => 'required_if:account_type,1|nullable|regex:'.$this->alphaNumSlash,
+            'cif'               => 'required_if:account_type,1|nullable|alpha_num',
+            'bank_account'      => 'required_if:account_type,1|nullable|alpha_num',
+            'bank_name'         => 'required_if:account_type,1|nullable|regex:'.$this->alphaDashSpaces,
         ];
         return $rules;
     }
@@ -167,7 +170,8 @@ class CartController extends Controller
         $proforma->save();
 
         Mail::to($comanda->email)->send(new NewOrderConfirm($comanda->customerName(),url('cart/vizualizareProforma/'.$comanda->id.'/'.$proforma->code)));
-        Mail::to('andrei.stiuca@yahoo.fr')->send(new NewOrderConfirm($comanda->customerName(),url('cart/vizualizareProforma/'.$comanda->id.'/'.$proforma->code),true));
+        $contact_email = $this->settings->property('contact_email');
+        Mail::to($contact_email)->send(new NewOrderConfirm($comanda->customerName(),url('cart/vizualizareProforma/'.$comanda->id.'/'.$proforma->code),true));
 
         Cart::destroy();
         return redirect('cart/checkout4');
@@ -187,14 +191,11 @@ class CartController extends Controller
                 'price' => 'required|numeric'
             ]);
 
+            $product = $this->products->find($request->product_id);
+            $price = $this->shop->priceWithoutVAT($product->price);
 
-            $produs = $this->produse->find($request->product_id);
-            $pr = $this->magazin->pretFaraTva($produs->pret);
+            Cart::add($request->product_id, $product->name, $request->qty, $price, ['size' => 'xxl']);
 
-            Cart::add($request->product_id, $produs->name, $request->qty, $pr, ['size' => 'xxl']);
-            //Cart::add($request->product_id, 'aaaa', $request->qty, 345345.00, ['size' => 'xxl']);
-
-            //return view('cart.total',['total'=>Cart::count()]);
             return Cart::count();
         }
     }
@@ -263,8 +264,7 @@ class CartController extends Controller
             ]);
         }
 
-        $produs = $this->produse->find($request->product_id);
+        $produs = $this->products->find($request->product_id);
         return $produs;
-
     }
 }

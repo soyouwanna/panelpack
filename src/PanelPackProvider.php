@@ -31,7 +31,6 @@ class PanelPackProvider extends ServiceProvider
         ], 'menu');
 
         $this->publishes([
-            __DIR__.'/config/settings.php' => config_path('settings.php'),
             __DIR__.'/config/shop.php' => config_path('shop.php'),
         ], 'config');
 
@@ -60,7 +59,6 @@ class PanelPackProvider extends ServiceProvider
         $this->mergeConfigFrom( __DIR__.'/config/auth_providers.php','auth.providers');
         $this->mergeConfigFrom( __DIR__.'/config/auth_passwords.php','auth.passwords');
         $this->mergeConfigFrom( __DIR__.'/config/imagecache_tpl.php','imagecache.templates');
-        $this->mergeConfigFrom( __DIR__.'/config/cart.php','cart');
-        $this->mergeConfigFrom( __DIR__.'/config/lfm.php','lfm');
+        $this->mergeConfigFrom( __DIR__.'/config/services_fb.php','services');
     }
 }

@@ -100,7 +100,7 @@ class FilesController extends Controller
             'title'   => 'required|max:100',
             'file'           => 'required|file|mimetypes:application/pdf',
         ]);
-        //dd('ok');
+
         $table = $this->tableGet($tabela);
         # Check 1 - if table exists
         if($table === false){
@@ -118,7 +118,7 @@ class FilesController extends Controller
             return redirect()->back();
         }
 
-        # Check 3 - if record accepts images, and how many($imagesMax)
+        # Check 3 - if record accepts files, and how many($filesMax)
         $settings = unserialize($table->settings);
         if((int)$settings['config']['functionFile'] != 1){
             $request->session()->flash('mesaj','Acesta inregistrare nu accepta fisiere.');
@@ -127,7 +127,7 @@ class FilesController extends Controller
             $filesMax = (int)$settings['config']['filesMax'];
         }
 
-        //Check 4 - compare number of pics in Images for the record with $imagesMax
+        //Check 4 - compare number of files in Files for the record with $filesMax
         $ordine = File::where('table_id', $table->id)->where('record_id',$recordId)->max('ordine');
         $filesNumber = File::where('table_id', $table->id)->where('record_id',$recordId)->count();
 
@@ -137,7 +137,7 @@ class FilesController extends Controller
             return redirect('admin/core/'.$tabela.'/addFile/'.$recordId);
         }
 
-        //Store file info in Images table
+        //Store file info in Files table
         $time = strval(time());
         $fileName = $tabela.'_ID'.$table->id.'_'.$recordId.'_'.$time.'.'.$request->file('file')->getClientOriginalExtension();
 
@@ -150,8 +150,8 @@ class FilesController extends Controller
         $file->save();
 
         // Store file on disk
-        // Storage::disk('files')->putFileAs('../../public_html/ldm/files/', $request->file('file'), $fileName);
-        Storage::disk('files')->putFileAs('files', $request->file('file'), $fileName);
+        $disk = ( config('app.env') == 'production' )?'files_p':'files';
+        Storage::disk($disk)->putFileAs('files', $request->file('file'), $fileName);
         $request->session()->flash('mesaj','Fisierul a fost adugat cu succes!');
         return redirect('admin/core/'.$tabela.'/addFile/'.$recordId);
     }
@@ -174,7 +174,6 @@ class FilesController extends Controller
         $tableName = $file->table->table_name;
         $recordId = $file->record_id;
 
-        // Storage::disk('files')->delete('../../public_html/ldm/files/'.$file->name);
         Storage::disk('files')->delete('files/'.$file->name);
         $file->delete();
 

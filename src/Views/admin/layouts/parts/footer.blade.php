@@ -10,15 +10,8 @@
 </div>
 
 <script src="{{ asset('assets/admin/vendors/decoweb/js/jquery.tablednd.0.7.min.js') }}"></script>
-<!-- Bootstrap -->
 <script src="{{ asset('assets/admin/vendors/bootstrap/dist/js/bootstrap.min.js') }}"></script>
-<!-- FastClick -->
-<script src="{{ asset('assets/admin/vendors/fastclick/lib/fastclick.js') }}"></script>
-<!-- NProgress -->
-<script src="{{ asset('assets/admin/vendors/nprogress/nprogress.js') }}"></script>
-<script src="{{ asset('assets/admin/vendors/select2/dist/js/select2.full.min.js') }}"></script>
 @yield('footer-assets')
-<!-- Custom Theme Scripts -->
 <script src="{{ asset('assets/admin/build/js/custom.min.js') }}"></script>
 @if(defined('EDITOR'))
 <script>
