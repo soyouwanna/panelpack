@@ -4,8 +4,6 @@ namespace Decoweb\Panelpack\Helpers;
 use Decoweb\Panelpack\Helpers\Contracts\PicturesContract;
 use Decoweb\Panelpack\Models\Image;
 use Decoweb\Panelpack\Models\SysCoreSetup;
-use function is_null;
-
 class Pictures implements PicturesContract
 {
     private $table_id;

@@ -19,29 +19,6 @@ class ImagesController extends Controller
     }
 
     /**
-     * Returns table info(collection) form SysCoreSetup or FALSE if table not found
-     *
-     * @param $tabela
-     * @return bool
-     */
-    private function tableGet($tabela)
-    {
-        $tabela = (string)trim($tabela);
-
-        if( !ctype_alpha($tabela)){
-            return false;
-        }
-
-        $table = Table::where('table_name', $tabela)->first();
-
-        if (null == $table){
-            return false;
-        }
-
-        return $table;
-    }
-
-    /**
      * Displays a page for adding a new image for a specified table record
      *
      * @param $tabela
@@ -51,7 +28,7 @@ class ImagesController extends Controller
     public function create($tabela, $recordId)
     {
         $recordId = (int)$recordId;
-        $table = $this->tableGet($tabela);
+        $table = Table::table($tabela);
 
         if( $table === false || $recordId == 0){
             return redirect()->back();
@@ -104,7 +81,7 @@ class ImagesController extends Controller
             'pic'           => 'required|image'
         ]);
 
-        $table = $this->tableGet($tabela);
+        $table = Table::table($tabela);
         # Check 1 - if table exists
         if($table === false){
             $request->session()->flash('mesaj','Acesta tabela nu exista.');

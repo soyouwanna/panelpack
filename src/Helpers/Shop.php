@@ -4,9 +4,6 @@ namespace Decoweb\Panelpack\Helpers;
 use Decoweb\Panelpack\Helpers\Contracts\ShopContract;
 use \Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Schema;
-use function in_array;
-use function is_int;
-
 class Shop implements ShopContract
 {
     private $category;

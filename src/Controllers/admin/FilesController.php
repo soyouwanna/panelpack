@@ -1,5 +1,4 @@
 <?php
-
 namespace Decoweb\Panelpack\Controllers\Admin;
 
 use Illuminate\Http\Request;

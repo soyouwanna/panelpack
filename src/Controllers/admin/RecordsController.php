@@ -2,7 +2,6 @@
 
 namespace Decoweb\Panelpack\Controllers\Admin;
 
-use Decoweb\Panelpack\Models\SysCoreSetup;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Schema;
@@ -35,7 +34,7 @@ class RecordsController extends Controller
         if(!in_array($tabela, $list)){
             return redirect('admin/home')->with('mesaj', 'Tabela nu exista in baza de date.');
         }
-        $core = Table::where('table_name',$tabela)->first();
+        $core = Table::where('table_name',$tabela)->firstOrFail();
 
         $settings = unserialize($core->settings);
         //dd($settings);
@@ -307,8 +306,8 @@ class RecordsController extends Controller
     public function update(Request $request, $tabela, $id)
     {
         $id = (int)$id;
-        $table = trim($tabela);
-        $tableData = Table::select('id','name','model','settings')->where('table_name',$table)->first();
+        $tableName = trim($tabela);
+        $tableData = Table::table($tableName,['id','name','model','settings']);
         $fields = unserialize($tableData->settings);
         //dd($fields);
 
@@ -316,14 +315,14 @@ class RecordsController extends Controller
         $model = '\App\\'.$modelName;
         $record = $model::find($id);
 
-        $rules = $this->generateRules($fields['elements'], $table);
+        $rules = $this->generateRules($fields['elements'], $tableName);
         //dd($rules);
 
         $this->validate($request,$rules);
 
         foreach($fields['elements'] as $column=>$data){
 
-            if( $data['type'] == 'select' && $this->recordHasChildren($table,$record) ){
+            if( $data['type'] == 'select' && $this->recordHasChildren($tableName,$record) ){
                 if( (int)$request->$column > 0 ){
                     $request->session()->flash('aborted','Modificare nereusita. Acesta categorie are deja subcategorii.');
                     return redirect('admin/core/'.$tabela.'/edit/'.$id);
@@ -359,8 +358,8 @@ class RecordsController extends Controller
      */
     public function recordsActions(Request $request, $tableName)
     {
-        $table = (string)trim($tableName);
-        $tableData = Table::select('name','model','settings')->where('table_name',$table)->first();
+        $tableName = (string)trim($tableName);
+        $tableData = Table::table($tableName,['name','model','settings']);
         if( !$tableData ){
             return redirect('admin/core/'.$tableName)->with('aborted','Tabela nu exista. [EROARE GRAVA]');
         }

@@ -1,5 +1,4 @@
 <?php
-
 namespace Decoweb\Panelpack\Helpers\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
