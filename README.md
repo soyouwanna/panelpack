@@ -1,5 +1,5 @@
 ## Panelpack
-### (testing branch --)
+### (testing branch ---)
 
 Admin panel for Laravel
 
