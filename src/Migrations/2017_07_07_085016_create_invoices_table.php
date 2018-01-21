@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Decoweb\Panelpack\Models\Invoice;
+use Illuminate\Validation\Rules\In;
 
 class CreateInvoicesTable extends Migration
 {
@@ -27,6 +29,21 @@ class CreateInvoicesTable extends Migration
             $table->string('tva');
             $table->timestamps();
         });
+
+        if(Schema::hasTable('invoices')){
+            $invoice = new Invoice();
+            $invoice->bank_name = 'Raiffeisen';
+            $invoice->cif = '123123';
+            $invoice->bank_account = 'RO58BRDE140SV222227';
+            $invoice->company = 'Nume firma';
+            $invoice->region = 'Bucuresti';
+            $invoice->city = 'Bucuresti';
+            $invoice->rc = 'J13/2944/12.12.2013';
+            $invoice->address = 'Strada ... nr.1';
+            $invoice->serie = '1234';
+            $invoice->tva = '19';
+            $invoice->save();
+        }
     }
 
     /**
