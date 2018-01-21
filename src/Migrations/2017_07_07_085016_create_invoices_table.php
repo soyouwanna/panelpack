@@ -4,7 +4,6 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 use Decoweb\Panelpack\Models\Invoice;
-use Illuminate\Validation\Rules\In;
 
 class CreateInvoicesTable extends Migration
 {

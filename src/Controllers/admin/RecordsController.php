@@ -5,7 +5,7 @@ namespace Decoweb\Panelpack\Controllers\Admin;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Schema;
-use Decoweb\Panelpack\Models\SysCoreSetup as Table;
+use Decoweb\Panelpack\Models\SysCoreSetup;
 use Decoweb\Panelpack\Models\Image as Poza;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -29,12 +29,12 @@ class RecordsController extends Controller
     public function index($tabela)
     {
         $tabela = (string)trim($tabela);
-        $list = Table::pluck('table_name')->toArray();
+        $list = SysCoreSetup::pluck('table_name')->toArray();
 
         if(!in_array($tabela, $list)){
             return redirect('admin/home')->with('mesaj', 'Tabela nu exista in baza de date.');
         }
-        $core = Table::where('table_name',$tabela)->firstOrFail();
+        $core = SysCoreSetup::where('table_name',$tabela)->firstOrFail();
 
         $settings = unserialize($core->settings);
         //dd($settings);
@@ -80,12 +80,12 @@ class RecordsController extends Controller
             (int)$settings['config']['functionFile'];
 
         return view('decoweb::admin.records.index',['tabela'     => $paginated,
-                                           'core'       => $core,
-                                           'settings'   => $settings,
-                                           'pics'       => $pics,
-                                           'filters'    => $filters,
-                                            'spanActions' => $spanActions,
-                                        ]);
+                                                    'core'       => $core,
+                                                    'settings'   => $settings,
+                                                    'pics'       => $pics,
+                                                    'filters'    => $filters,
+                                                    'spanActions' => $spanActions,
+        ]);
     }
 
     private function drawTree(array $array, $displayedName, $recursiveMax, $deep = 0, $parent = 0, &$result = array()){
@@ -178,7 +178,7 @@ class RecordsController extends Controller
     public function delete(Request $request, $tabela, $id)
     {
         $id = (int)$id; // $id of the record to delete
-        $table = Table::where('table_name', $tabela)->first();
+        $table = SysCoreSetup::where('table_name', $tabela)->first();
         if(null == $table){
             $request->session()->flash('mesaj','Acesta tabela nu este exista.');
             return redirect()->back();
@@ -197,13 +197,13 @@ class RecordsController extends Controller
         return redirect('admin/core/'.$table->table_name);
     }
 
-    private function recordHasChildren($table, $record)
+    private function recordHasChildren($tableName, $record)
     {
-        if( ! Schema::hasColumn($table,'parent') ){
+        if( ! Schema::hasColumn($tableName,'parent') ){
             return false;
         }
 
-        $parentIds = DB::table($table)->pluck('parent')->toArray();
+        $parentIds = DB::table($tableName)->pluck('parent')->toArray();
         //dd($parentIds);
         if(in_array($record->id,$parentIds)){
             return true;
@@ -223,7 +223,7 @@ class RecordsController extends Controller
             return redirect('admin/home');
         }
 
-        $core = Table::where('table_name',$table)->first();
+        $core = SysCoreSetup::where('table_name',$table)->first();
         $fields = unserialize($core->settings);
         //dd($settings);
         $settings = $this->getOptions($fields, $table);
@@ -284,7 +284,7 @@ class RecordsController extends Controller
     {
         $id = (int)$id;
         $table = (string)trim($table);
-        $tableData = Table::select('name','model','settings')->where('table_name',$table)->first();
+        $tableData = SysCoreSetup::select('name','model','settings')->where('table_name',$table)->first();
         $fields = unserialize($tableData->settings);
         $settings = $this->getOptions($fields, $table, $id);
 
@@ -307,7 +307,7 @@ class RecordsController extends Controller
     {
         $id = (int)$id;
         $tableName = trim($tabela);
-        $tableData = Table::table($tableName,['id','name','model','settings']);
+        $tableData = SysCoreSetup::table($tableName,['id','name','model','settings']);
         $fields = unserialize($tableData->settings);
         //dd($fields);
 
@@ -359,7 +359,7 @@ class RecordsController extends Controller
     public function recordsActions(Request $request, $tableName)
     {
         $tableName = (string)trim($tableName);
-        $tableData = Table::table($tableName,['name','model','settings']);
+        $tableData = SysCoreSetup::table($tableName,['name','model','settings']);
         if( !$tableData ){
             return redirect('admin/core/'.$tableName)->with('aborted','Tabela nu exista. [EROARE GRAVA]');
         }
@@ -397,7 +397,7 @@ class RecordsController extends Controller
                 $toDelete = [];
                 foreach($request->item as $itemKey=>$item){
                     $record = $model::find((int)$itemKey);
-                    if( !is_null($record) && $this->recordHasChildren($table,$record) ){
+                    if( !is_null($record) && $this->recordHasChildren($tableName,$record) ){
                         continue;
                     }
                     $toDelete[] = $itemKey;
@@ -469,7 +469,7 @@ class RecordsController extends Controller
         foreach($settings['elements'] as &$field){
             if($field['type'] == 'select'){
                 if ( $field['selectTable'] != $table) {
-                    $parent = Table::where('table_name', $field['selectTable'])->first();
+                    $parent = SysCoreSetup::where('table_name', $field['selectTable'])->first();
                     $parentSettings = unserialize($parent->settings);
                     $sameTable = false;
                 }else{
@@ -559,7 +559,7 @@ class RecordsController extends Controller
 
     private function generateFilters($tableId)
     {
-        $table = Table::find($tableId);
+        $table = SysCoreSetup::find($tableId);
         $settings = unserialize($table->settings);
         if( empty($settings['filter']) ) {
             return false;
@@ -594,7 +594,7 @@ class RecordsController extends Controller
         return $filters;
     }
 
-    public function limit(Request $request, Table $table)
+    public function limit(Request $request, SysCoreSetup $table)
     {
         $this->validate($request,[
             'perPage' => 'required|integer|min:5'
