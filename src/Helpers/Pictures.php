@@ -7,38 +7,98 @@ use Decoweb\Panelpack\Models\SysCoreSetup;
 class Pictures implements PicturesContract
 {
     private $table_id;
-    public function getPics($howMany = 0)
-    {
-        $howMany = (int)$howMany;
-        //dd($this->table_id);
-        if ($howMany > 0){
-            $items = Image::where('table_id',$this->table_id)->orderBy('ordine')->take($howMany)->get();
-        }else{
-            $items = Image::where('table_id',$this->table_id)->orderBy('ordine')->get();
-        }
+    private $pics = [];
 
-        $pics = [];
-        foreach ($items as $pic){
-            $pics[$pic->record_id][] = $pic->name;
-        }
-        return $pics;
-    }
-
-    public function setModel($model)
+    /**
+     * -------------------------------------------------------
+     * The model is needed to find the correspondent table_id
+     *  used to query for pictures in 'images' table.
+     * -------------------------------------------------------
+     *
+     * @param string $modelName
+     * @return $this
+     */
+    public function setModel($modelName)
     {
-        $table = SysCoreSetup::select('id')->where('model',$model)->first();
+        $table = SysCoreSetup::select('id')->where('model',trim((string)$modelName))->first();
         $this->table_id = ( !is_null($table) )?(int)$table->id:null;
         return $this;
     }
 
-    public function recordPics($recordId)
+    /**
+     * ----------------------------------------------------
+     * Collects all pics for a table.
+     * ----------------------------------------------------
+     *
+     * @param array $moreWhere
+     * @return mixed
+     */
+    private function collectPics(array $moreWhere = [])
+    {
+        $items = new Image();
+        $items->newQuery();
+        return $items->where( array_merge(['table_id'=>$this->table_id], $moreWhere) )
+            ->orderBy('ordine')
+            ->oldest()
+            ->get();
+    }
+
+    /**
+     * ---------------------------------------------------------
+     * Returns all pics for a table.
+     * ---------------------------------------------------------
+     *
+     * @return array
+     */
+    public function getPics()
+    {
+        foreach ($this->collectPics() as $pic){
+            $this->pics[$pic->record_id][] = $pic->name;
+        }
+        return $this->pics;
+    }
+
+    /**
+     * -------------------------------------------------------------
+     * Returns first pic for each record. Pics descriptions are
+     * also provided if second param is set to "true".
+     * -----------------------------------------------------------
+     * @param bool $withDescription
+     * @return array
+     */
+    public function recordsFirstPics($withDescription = false)
+    {
+        foreach ($this->collectPics() as $pic){
+            if(array_key_exists($pic->record_id, $this->pics)) continue;
+            if( $withDescription === true ){
+                $this->pics[$pic->record_id] = ['name'=>$pic->name,'description'=>$pic->description];
+            }else{
+                $this->pics[$pic->record_id] = $pic->name;
+            }
+        }
+        return $this->pics;
+    }
+
+    /**
+     * -----------------------------------------------------------
+     * Returns all pics for a specified record. Pic description is
+     * also provided if second param is set to "true".
+     * -----------------------------------------------------------
+     *
+     * @param      $recordId
+     * @param bool $withDescription
+     * @return array
+     */
+    public function recordPics($recordId, $withDescription = false)
     {
         $recordId = (int)$recordId;
-        $items = Image::where('table_id',$this->table_id)->where('record_id',$recordId)->orderBy('ordine')->get();
-        $pics = [];
-        foreach ($items as $pic){
-            $pics[] = $pic->name;
+        foreach ($this->collectPics(['record_id' =>$recordId]) as $pic){
+            if( $withDescription === true ){
+                $this->pics[] = ['name'=>$pic->name,'description'=>$pic->description];
+            }else{
+                $this->pics[] = $pic->name;
+            }
         }
-        return $pics;
+        return $this->pics;
     }
 }

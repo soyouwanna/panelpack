@@ -23,32 +23,36 @@ class RecordsController extends Controller
     /**
      * Returns all records from a table
      *
-     * @param $tabela
+     * @param $tableName
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
      */
-    public function index($tabela)
+    public function index($tableName)
     {
-        $tabela = (string)trim($tabela);
-        $list = SysCoreSetup::pluck('table_name')->toArray();
-
-        if(!in_array($tabela, $list)){
-            return redirect('admin/home')->with('mesaj', 'Tabela nu exista in baza de date.');
+        $tableName = trim($tableName);
+        $core = SysCoreSetup::table($tableName);
+        if( ! $core instanceof SysCoreSetup ){
+            return redirect('admin/home')->with('aborted', 'Tabela nu exista in baza de date.');
         }
-        $core = SysCoreSetup::where('table_name',$tabela)->firstOrFail();
 
         $settings = unserialize($core->settings);
-        //dd($settings);
 
-        $orderBy = ($settings['config']['functionSetOrder'] == 1)?'order':'created_at';
+        $orderQueryUrl = false;
         $appends = null;
-        $query = DB::table($tabela);
+        $query = DB::table($tableName);
         $this->applyFilters($query, $settings);
         if( request()->has('order') && request()->has('dir')){
-            $query->orderBy(request('order'),request('dir'));
-            $appends[] = 'order|'.request('order');
-            $appends[] = 'dir|'.request('dir');
+            $displayedName = $settings['config']['displayedName'];
+            if( in_array(request('order'), ['order', 'visible', $displayedName ]) && in_array(request('dir'), ['asc','desc']) ){
+                $query->orderBy(request('order'),request('dir'));
+                $appends[] = 'order|'.request('order');
+                $appends[] = 'dir|'.request('dir');
+                if( request('order') == 'order' ) $orderQueryUrl = true;
+            }
         }
-        $query->orderBy($orderBy, 'asc');
+        if($settings['config']['functionSetOrder'] == 1 && $orderQueryUrl == false ){
+            $query->orderBy('order');
+        };
+        $query->orderBy('created_at');
         $records = $query->get();
 
         $recordsToArray = $records->toArray();
@@ -62,8 +66,7 @@ class RecordsController extends Controller
 
         $paginated = $this->paginate($tree, $settings, $appends);
         $filters = $this->generateFilters($core->id);
-        //dd($filters);
-        //dd($paginated);
+
         if($settings['config']['functionImages'] == 1){
             $poze = Poza::where('table_id', $core->id)->orderBy('ordine','asc')->get();
             $pics = [];
@@ -79,13 +82,16 @@ class RecordsController extends Controller
             (int)$settings['config']['functionEdit'] +
             (int)$settings['config']['functionFile'];
 
-        return view('decoweb::admin.records.index',['tabela'     => $paginated,
-                                                    'core'       => $core,
-                                                    'settings'   => $settings,
-                                                    'pics'       => $pics,
-                                                    'filters'    => $filters,
-                                                    'spanActions' => $spanActions,
-        ]);
+        return view('decoweb::admin.records.index',
+            [
+                'tabela'        => $paginated,
+                'core'          => $core,
+                'settings'      => $settings,
+                'pics'          => $pics,
+                'filters'       => $filters,
+                'spanActions'   => $spanActions,
+            ]
+        );
     }
 
     private function drawTree(array $array, $displayedName, $recursiveMax, $deep = 0, $parent = 0, &$result = array()){
