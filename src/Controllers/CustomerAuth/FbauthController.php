@@ -62,7 +62,7 @@ class FbauthController extends Controller
             return $authUser;
         }
         $verified = 0;
-        $parola_bcrypt = NULL;
+        $parola_bcrypt = null;
 
         if(trim($user->email) != ''){
             $verified = 1;

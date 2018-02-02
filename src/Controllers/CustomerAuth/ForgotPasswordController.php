@@ -22,7 +22,7 @@ class ForgotPasswordController extends Controller
 
     public function showLinkRequestForm()
     {
-        return view('customers.auth.passwords.email');
+        return view('vendor.decoweb.customers.auth.passwords.email');
     }
     /**
      * Create a new controller instance.

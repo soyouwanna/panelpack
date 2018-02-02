@@ -94,6 +94,15 @@ class RecordsController extends Controller
         );
     }
 
+    /**
+     * @param array $array
+     * @param       $displayedName
+     * @param       $recursiveMax
+     * @param int   $deep
+     * @param int   $parent
+     * @param array $result
+     * @return array
+     */
     private function drawTree(array $array, $displayedName, $recursiveMax, $deep = 0, $parent = 0, &$result = array()){
         if ($parent != 0){
             $deep++;
