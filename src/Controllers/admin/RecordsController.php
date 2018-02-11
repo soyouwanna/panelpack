@@ -229,20 +229,20 @@ class RecordsController extends Controller
     /**
      * Displays a page for creating a new record in the specified table
      *
-     * @param $table
+     * @param $tableName
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|\Illuminate\View\View
      */
-    public function create($table)
+    public function create($tableName)
     {
-        if(!Schema::hasTable($table)){
+        if(!Schema::hasTable($tableName)){
             return redirect('admin/home');
         }
 
-        $core = SysCoreSetup::where('table_name',$table)->first();
-        $fields = unserialize($core->settings);
+        $table = SysCoreSetup::table($tableName);
+        $fields = unserialize($table->settings);
         //dd($settings);
-        $settings = $this->getOptions($fields, $table);
-        return view('decoweb::admin.records.create',['table'=>$core, 'settings'=>$settings]);
+        $settings = $this->getOptions($fields, $tableName);
+        return view('decoweb::admin.records.create',['table'=>$table, 'settings'=>$settings]);
     }
 
     /**
@@ -291,17 +291,17 @@ class RecordsController extends Controller
     /**
      * Edits a record
      *
-     * @param $table
+     * @param $tableName
      * @param $id
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function edit($table, $id)
+    public function edit($tableName, $id)
     {
         $id = (int)$id;
-        $table = (string)trim($table);
-        $tableData = SysCoreSetup::select('name','model','settings')->where('table_name',$table)->first();
+        $tableName = (string)trim($tableName);
+        $tableData = SysCoreSetup::select('name','model','settings')->where('table_name',$tableName)->first();
         $fields = unserialize($tableData->settings);
-        $settings = $this->getOptions($fields, $table, $id);
+        $settings = $this->getOptions($fields, $tableName, $id);
 
         $modelName = $tableData->model;
         $model = '\App\\'.$modelName;

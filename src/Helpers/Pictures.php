@@ -74,7 +74,7 @@ class Pictures implements PicturesContract
                 $this->pics[$pic->record_id] = ['name'=>$pic->name,'description'=>$pic->description];
             }else{
                 $this->pics[$pic->record_id] = $pic->name;
-            }
+            }gi
         }
         return $this->pics;
     }
