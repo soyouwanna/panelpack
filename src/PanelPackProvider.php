@@ -35,6 +35,10 @@ class PanelPackProvider extends ServiceProvider
         ], 'config');
 
         $this->publishes([
+            __DIR__.'/config/imagesize.php' => config_path('imagesize.php'),
+        ], 'config');
+
+        $this->publishes([
             __DIR__.'/Middleware' => app_path('Http/Middleware'),
         ], 'middleware');
 

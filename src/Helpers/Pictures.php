@@ -20,6 +20,8 @@ class Pictures implements PicturesContract
      */
     public function setModel($modelName)
     {
+        unset($this->table_id);
+        $this->pics=[];
         $table = SysCoreSetup::select('id')->where('model',trim((string)$modelName))->first();
         $this->table_id = ( !is_null($table) )?(int)$table->id:null;
         return $this;

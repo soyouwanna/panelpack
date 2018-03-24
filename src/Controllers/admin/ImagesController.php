@@ -130,19 +130,30 @@ class ImagesController extends Controller
         $pic->save();
 
         // Store file on disk
-        $img = Image::make( $request->file('pic'));
-        if( $img->height() > 640 ){
-            $img->resize(null, 640, function ($constraint) {
-                $constraint->aspectRatio();
-            });
-        }
-        $img->save(storage_path('app/uploads/'.$picName), 65);
-        $img->resize(null,90,function ($constraint) {
-            $constraint->aspectRatio();
-        })->save(storage_path('app/uploads/thumb_'.$picName), 75);
+        $this->resizeAndStore($request->file('pic'),$picName,$table->table_name);
 
         $request->session()->flash('mesaj','Poza a fost adugata.');
         return redirect('admin/core/'.$tabela.'/addPic/'.$recordId);
+    }
+
+    private function resizeAndStore( $pic, $picName, $tableName )
+    {
+        list($width, $height, $compression) = config('imagesize.'.$tableName);
+        
+        $img = Image::make($pic);
+        if( !is_null($width) ){
+            $img->fit($width, $height, function ($constraint) {
+                $constraint->upsize();
+            });
+        }elseif( $img->height() > $height ){
+            $img->resize(null, $height, function ($constraint) {
+                $constraint->aspectRatio();
+            });
+        }
+        $img->save(storage_path('app/uploads/'.$picName), $compression);
+        $img->resize(null,90,function ($constraint) {
+            $constraint->aspectRatio();
+        })->save(storage_path('app/uploads/thumb_'.$picName), 75);
     }
 
     /**
