@@ -121,7 +121,7 @@
             <tr>
                 <td><input type="checkbox" class="records" name="item[{{ $t['id'] }}]"></td>
                 <?php $name = $settings['config']['displayedName']; ?>
-                <td>{{ $t[$name] }}</td>
+                <td>{{ html_entity_decode($t[$name]) }}</td>
                 @if($settings['config']['functionSetOrder'] == 1)
                 <td class="text-center"><input type="text" name="orderId[{{ $t['id'] }}]" class="numar" value="{{ $t['order'] }}"></td>
                 @endif
