@@ -202,7 +202,7 @@ class RecordsController extends Controller
         $model = 'App\\'.$table->model;
         $record = $model::find($id);
         if( $this->recordHasChildren($table->table_name, $record) === true ){
-            $name = strtoupper($record->$settings['config']['displayedName']);
+            $name = strtoupper($record->{$settings['config']['displayedName']});
             $message = "EROARE: Categoria $name are subcategorii. Va rugam sa stergeti mai intai subcategoriile.";
             return redirect('admin/core/'.$table->table_name)->with('mesaj',$message);
         }
@@ -576,11 +576,10 @@ class RecordsController extends Controller
     {
         $table = SysCoreSetup::find($tableId);
         $settings = unserialize($table->settings);
-        if( empty($settings['filter']) ) {
+        if( empty(array_filter($settings['filter'])) ) {
             return false;
         }
-        //return $settings;
-        //dd($settings);
+
         $filterColumns = $settings['filter'];
         $elements = $settings['elements'];
 

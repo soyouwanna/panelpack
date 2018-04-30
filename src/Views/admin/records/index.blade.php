@@ -47,7 +47,7 @@
     <a class="btn btn-primary btn-small" href="{{ url('admin/core/'.$core->table_name.'/create') }}"><i class="fa fa-plus-circle"></i> {{ $settings['messages']['add'] }}</a><hr>
     @endif
 
-    @if( !empty($settings['filter']) )
+    @if( !empty(array_filter($settings['filter'])) )
         {!! Form::open(['method'=>'POST','url'=>'admin/core/'.$core->table_name,'class'=>'form-horizontal']) !!}
 
         <div class="panel panel-default">
