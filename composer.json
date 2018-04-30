@@ -5,15 +5,14 @@
     "license": "MIT",
     "minimum-stability": "dev",
     "require": {
-        "barryvdh/laravel-dompdf": "^0.8.0",
+        "barryvdh/laravel-dompdf": "^0.8.2",
         "gloudemans/shoppingcart": "^2.5",
-        "guzzlehttp/guzzle": "^6.2",
         "intervention/imagecache": "^2.3",
-        "laravel/socialite": "v2.0.20",
-        "laravel/tinker": "~1.0",
-        "laravelcollective/html": "5.4.*",
-        "unisharp/laravel-ckeditor": "^4.5",
-        "unisharp/laravel-filemanager": "1.7.6",
+        "laravel/framework": "5.6.*",
+        "laravel/socialite": "^3.0",
+        "laravelcollective/html": "^5.6",
+        "unisharp/laravel-ckeditor": "^4.7",
+        "unisharp/laravel-filemanager": "~1.8",
         "watson/sitemap": "^2.0"
     },
     "autoload": {
