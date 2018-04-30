@@ -30,7 +30,7 @@
                 "Watson\\Sitemap\\SitemapServiceProvider",
                 "Unisharp\\Ckeditor\\ServiceProvider",
                 "Decoweb\\Panelpack\\PanelPackProvider",
-                "Decoweb\\Panelpack\\Providers\\MagazinServiceProvider",
+                "Decoweb\\Panelpack\\Providers\\ShopServiceProvider",
                 "Decoweb\\Panelpack\\Providers\\PicturesServiceProvider",
                 "Decoweb\\Panelpack\\Providers\\ComposerServiceProvider",
                 "Laravel\\Socialite\\SocialiteServiceProvider",
