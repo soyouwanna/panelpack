@@ -9,6 +9,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Decoweb\Panelpack\Models\SysCoreSetup as Table;
 use Illuminate\Support\Facades\Storage;
 use Decoweb\Panelpack\Models\Image;
+use Illuminate\Support\Facades\Cache;
 class TablesController extends Controller
 {
     private $table;
@@ -29,6 +30,7 @@ class TablesController extends Controller
         'sessions',
         'shoppingcart',
         'sys_core_options',
+        'sys_settings',
         'transports',
         'users',
     ];
@@ -316,11 +318,21 @@ BOB;
     {
         $id = (int)trim($idTable);
         $tabela = Table::find($id);
+
+        if( null == $tabela ){
+            return redirect('admin/table-settings')
+                ->with('aborted', "Definitia tabelei cu id-ul #$id nu exista in 'sys_core_setups'.");
+        }
+
         $flag = $tabela->name.' NU';
         $deSters = trim($tabela->table_name);
         if( Schema::hasTable($deSters) && !in_array($deSters, $this->forbiddenTables)){
             $flag = $tabela->name;
             Schema::dropIfExists($deSters);
+        }
+
+        if (Cache::has('core_'.trim($deSters))) {
+            Cache::forget( 'core_'.trim($deSters) );
         }
 
         $model = "../app/".trim($tabela->model).".php";

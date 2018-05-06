@@ -10,6 +10,7 @@ use Decoweb\Panelpack\Models\Image as Poza;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 
 class RecordsController extends Controller
 {
@@ -21,6 +22,28 @@ class RecordsController extends Controller
     }
 
     /**
+     * Gets TABLE DATA from database.sys_core_setups & caches it forever
+     *
+     * @param string $tableName
+     * @return mixed
+     */
+    private function tableCore(string $tableName)
+    {
+        $tableName = trim($tableName);
+
+        $core = Cache::rememberForever('core_'.$tableName, function() use ($tableName) {
+
+            $core = SysCoreSetup::table( $tableName );
+
+            if( ! $core instanceof SysCoreSetup ) return false;
+
+            return $core;
+        });
+
+        return $core;
+    }
+
+    /**
      * Returns all records from a table
      *
      * @param $tableName
@@ -28,9 +51,10 @@ class RecordsController extends Controller
      */
     public function index($tableName)
     {
-        $tableName = trim($tableName);
-        $core = SysCoreSetup::table($tableName);
-        if( ! $core instanceof SysCoreSetup ){
+        $core = $this->tableCore( $tableName );
+
+        if( $core === false ){
+            $this->clearTableCoreCache($tableName);
             return redirect('admin/home')->with('aborted', 'Tabela nu exista in baza de date.');
         }
 
@@ -65,7 +89,7 @@ class RecordsController extends Controller
         }
 
         $paginated = $this->paginate($tree, $settings, $appends);
-        $filters = $this->generateFilters($core->id);
+        $filters = $this->generateFilters($core->table_name);
 
         if($settings['config']['functionImages'] == 1){
             $poze = Poza::where('table_id', $core->id)->orderBy('ordine','asc')->get();
@@ -193,7 +217,7 @@ class RecordsController extends Controller
     public function delete(Request $request, $tabela, $id)
     {
         $id = (int)$id; // $id of the record to delete
-        $table = SysCoreSetup::where('table_name', $tabela)->first();
+        $table = $this->tableCore($tabela);
         if(null == $table){
             $request->session()->flash('mesaj','Acesta tabela nu este exista.');
             return redirect()->back();
@@ -238,7 +262,7 @@ class RecordsController extends Controller
             return redirect('admin/home');
         }
 
-        $table = SysCoreSetup::table($tableName);
+        $table = $this->tableCore($tableName);
         $fields = unserialize($table->settings);
         //dd($settings);
         $settings = $this->getOptions($fields, $tableName);
@@ -306,7 +330,11 @@ class RecordsController extends Controller
         $modelName = $tableData->model;
         $model = '\App\\'.$modelName;
         $record = $model::find($id);
-        //dd($settings);
+
+        if( null === $record){
+            return redirect('admin/core/'.trim($tableName))->with('aborted','Inregistrare inexistenta');
+        }
+
         return view('decoweb::admin.records.edit',['record'=>$record, 'fields'=>$settings]);
     }
 
@@ -322,16 +350,14 @@ class RecordsController extends Controller
     {
         $id = (int)$id;
         $tableName = trim($tabela);
-        $tableData = SysCoreSetup::table($tableName,['id','name','model','settings']);
+        $tableData = $this->tableCore($tableName);
         $fields = unserialize($tableData->settings);
-        //dd($fields);
 
         $modelName = $tableData->model;
         $model = '\App\\'.$modelName;
         $record = $model::find($id);
 
         $rules = $this->generateRules($fields['elements'], $tableName);
-        //dd($rules);
 
         $this->validate($request,$rules);
 
@@ -374,7 +400,7 @@ class RecordsController extends Controller
     public function recordsActions(Request $request, $tableName)
     {
         $tableName = (string)trim($tableName);
-        $tableData = SysCoreSetup::table($tableName,['name','model','settings']);
+        $tableData = $this->tableCore($tableName);
         if( !$tableData ){
             return redirect('admin/core/'.$tableName)->with('aborted','Tabela nu exista. [EROARE GRAVA]');
         }
@@ -572,9 +598,9 @@ class RecordsController extends Controller
         #paginator END
     }
 
-    private function generateFilters($tableId)
+    private function generateFilters($tableName)
     {
-        $table = SysCoreSetup::find($tableId);
+        $table = $this->tableCore($tableName);
         $settings = unserialize($table->settings);
         if( empty(array_filter($settings['filter'])) ) {
             return false;
@@ -618,6 +644,24 @@ class RecordsController extends Controller
         $table->settings = serialize($settings);
         $table->save();
 
+        $this->clearTableCoreCache($settings['config']['tableName']);
+
         return redirect()->back();
+    }
+
+    /**
+     * Clear the cache of a table
+     *
+     * @param $tableName
+     * @return bool
+     */
+    private function clearTableCoreCache($tableName)
+    {
+        $key = 'core_'.trim($tableName);
+        if (Cache::has( $key )){
+            Cache::forget( $key );
+            return true;
+        }
+        return false;
     }
 }
