@@ -45,7 +45,7 @@ class RecordsController extends Controller
 
     /**
      * Returns all records from a table
-     *
+     * 
      * @param $tableName
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
      */
