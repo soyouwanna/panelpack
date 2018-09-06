@@ -322,8 +322,9 @@ class RecordsController extends Controller
     public function edit($tableName, $id)
     {
         $id = (int)$id;
-        $tableName = (string)trim($tableName);
-        $tableData = SysCoreSetup::select('name','model','settings')->where('table_name',$tableName)->first();
+        // $tableName = (string)trim($tableName);
+        // $tableData = SysCoreSetup::select('name','model','settings')->where('table_name',$tableName)->first();
+        $tableData = $this->tableCore( $tableName );
         $fields = unserialize($tableData->settings);
         $settings = $this->getOptions($fields, $tableName, $id);
 
