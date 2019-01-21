@@ -24,7 +24,7 @@
         "laravel": {
             "providers": [
                 "Collective\\Html\\HtmlServiceProvider",
-                "Unisharp\\LaravelFilemanager\\LaravelFilemanagerServiceProvider",
+                "UniSharp\\LaravelFilemanager\\LaravelFilemanagerServiceProvider",
                 "Intervention\\Image\\ImageServiceProvider",
                 "Gloudemans\\Shoppingcart\\ShoppingcartServiceProvider",
                 "Watson\\Sitemap\\SitemapServiceProvider",
