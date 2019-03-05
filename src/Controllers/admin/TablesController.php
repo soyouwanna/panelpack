@@ -260,17 +260,21 @@ class TablesController extends Controller
             if($this->table['config']['functionVisible'] === 1){
                 $tab->tinyInteger('visible')->default(1);
             }
+            $tab->string('slug',350);
             $tab->timestamps();
         });
 
         if($this->hasParents > 0){
             if(Schema::hasTable($tableName)) {
                 Schema::table($tableName, function (Blueprint $table) {
+
                     foreach($this->table['elements'] as $column => $property){
                         if($property['type'] == 'select' && $this->table['config']['functionRecursive'] != 1) {
                             $table->foreign($column)->references('id')->on($property['selectTable'])->onDelete('set null');
                         }
                     }
+
+                    $table->index('slug');
 
                 });
             }

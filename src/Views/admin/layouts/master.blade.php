@@ -50,6 +50,7 @@
                             </a>
                             <ul class="dropdown-menu dropdown-usermenu pull-right">
                                 <li><a href="{{ url('admin/home/account') }}"><i class="fa fa-user pull-right"></i> Profil</a></li>
+                                <li><a href="{{ url('admin/help') }}"><i class="fa fa-info pull-right"></i> Ajutor</a></li>
                                 <li>
                                     <a href="{{ url('admin/logout') }}"
                                        onclick="event.preventDefault();

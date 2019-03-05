@@ -58,4 +58,9 @@ class HomeController extends Controller
         $request->session()->flash('mesaj','Parola a fost schimbata.');
         return redirect('admin/home/account');
     }
+
+    public function help()
+    {
+        return view('decoweb::admin.help');
+    }
 }

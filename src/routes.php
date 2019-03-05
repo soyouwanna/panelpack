@@ -64,6 +64,7 @@ Route::post('cart/update','Decoweb\Panelpack\Controllers\CartController@update')
  *
  ***************************/
 Route::get('admin/home', 'Decoweb\Panelpack\Controllers\Admin\HomeController@index');
+Route::get('admin/help', 'Decoweb\Panelpack\Controllers\Admin\HomeController@help');
 Route::get('admin/home/account', 'Decoweb\Panelpack\Controllers\Admin\HomeController@account');
 Route::put('admin/home/account/update/{id}',[
     'uses'  => 'Decoweb\Panelpack\Controllers\Admin\HomeController@updatePassword',

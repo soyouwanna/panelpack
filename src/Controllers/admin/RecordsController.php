@@ -296,6 +296,10 @@ class RecordsController extends Controller
                     $newRecord->$column = $request->$column;
                 }
             }
+            # Storing the record's slug
+            if($column === $fields['config']['displayedName']){
+                $newRecord->slug = str_slug($request->$column);
+            }
 
         }
         if($fields['config']['functionVisible'] == 1){
@@ -378,6 +382,11 @@ class RecordsController extends Controller
                     $record->$column = null;
                 }else{
                     $record->$column = $request->$column;
+                    
+                    # Updates record's slug
+                    if($column === $fields['config']['displayedName']){
+                        $record->slug = str_slug($request->$column);
+                    }
                 }
             }
 
