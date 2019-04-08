@@ -6,7 +6,7 @@
     "minimum-stability": "dev",
     "require": {
         "barryvdh/laravel-dompdf": "^0.8.2",
-        "gloudemans/shoppingcart": "^2.5",
+        "bumbummen99/shoppingcart": "2.8.*",
         "intervention/imagecache": "^2.3",
         "laravel/framework": "5.8.*",
         "laravel/socialite": "^3.0",
