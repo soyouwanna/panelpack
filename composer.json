@@ -1,5 +1,5 @@
 {
-    "name": "decoweb/panelpack",
+    "name": "soyouwanna/panelpack",
     "description": "Admin panel pack for laravel",
     "type": "project",
     "license": "MIT",
@@ -8,7 +8,7 @@
         "barryvdh/laravel-dompdf": "^0.8.2",
         "gloudemans/shoppingcart": "^2.5",
         "intervention/imagecache": "^2.3",
-        "laravel/framework": "5.6.*",
+        "laravel/framework": "5.8.*",
         "laravel/socialite": "^3.0",
         "laravelcollective/html": "^5.6",
         "unisharp/laravel-ckeditor": "^4.7",
